@@ -419,3 +419,5 @@ Execute the automated and manual test scenarios documented in [`docs/TEST_CASES.
   --info-soft: #E2ECE4;
 }
 ```
+
+# FISCAL
