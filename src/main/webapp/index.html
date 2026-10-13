@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FISCAL — Custom Tax Management System | Clarity in every calculation.</title>
+  <meta name="description" content="FISCAL is a custom tax management workspace that brings taxpayer information, tax categories, tax calculations, and payment records into one organized interface.">
+
+  <!-- Modern Clean Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="assets/css/fiscal-tokens.css">
+  <link rel="stylesheet" href="assets/css/fiscal-base.css">
+  <link rel="stylesheet" href="assets/css/fiscal-layout.css">
+  <link rel="stylesheet" href="assets/css/fiscal-views.css">
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. EDITORIAL SPLIT-SCREEN AUTHENTICATION EXPERIENCE
+       ======================================================================== -->
+  <div id="login-container" class="login-page">
+    <div class="login-split-container">
+      
+      <!-- Brand Editorial Canvas (Left) -->
+      <div class="login-brand-panel">
+        <div class="login-brand-top">
+          <div class="login-spec-label">CUSTOM TAX MANAGEMENT / 001</div>
+          <div class="login-brand-title">FISCAL</div>
+          <div class="login-brand-descriptor">TAX MANAGEMENT SYSTEM</div>
+          <h1 class="login-editorial-headline">Clarity in every calculation.</h1>
+          <p class="login-editorial-copy">
+            One workspace to manage taxpayers, calculate tax liabilities, and keep payment records organized.
+          </p>
+          <div class="login-editorial-secondary">Every figure accounted for.</div>
+        </div>
+
+        <!-- 3D Interactive DBMS Architecture Canvas -->
+        <div id="dbms-3d-wrapper" class="dbms-3d-wrapper" title="Interactive 3D Oracle DBMS Architecture. Move mouse to tilt, click to trigger query pulse.">
+          <canvas id="dbms-3d-canvas" class="dbms-3d-canvas"></canvas>
+          <div class="dbms-hud-bar">
+            <span class="dbms-hud-dot"></span>
+            <span id="dbms-hud-text" class="dbms-hud-label">ORACLE 19c ENGINE • REPLICA SYNC</span>
+            <span class="dbms-hud-chip">3D RDBMS</span>
+          </div>
+        </div>
+
+
+
+        <div class="login-brand-footer">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <span>ACADEMIC PAT PROJECT • ORACLE DATABASE EDITION</span>
+            <span>JAVA SERVLETS + JDBC + APACHE TOMCAT</span>
+          </div>
+          <button type="button" class="btn-about-link" onclick="FiscalApp.openModal('modal-about-dialog')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            About Website & Academic Credits ↗
+          </button>
+        </div>
+      </div>
+
+      <!-- Authentication Form Panel (Right) -->
+      <div class="login-auth-panel">
+        <div class="auth-card tactile-surface">
+          <div class="auth-header">
+            <h2 class="auth-title">WORKSPACE ACCESS</h2>
+            <p class="auth-subtitle">Sign in with authorized system credentials.</p>
+          </div>
+
+          <div id="login-error-message" style="display:none; padding:10px 14px; background:var(--danger-soft); color:var(--danger); border-radius:var(--radius-small); font-size:13px; margin-bottom:16px;"></div>
+
+          <form id="form-login">
+            <div class="form-group">
+              <label class="form-label" for="login-username">Operator Username</label>
+              <input type="text" id="login-username" class="form-input" placeholder="e.g. admin or officer" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="login-password">Secret Key / Password</label>
+              <input type="password" id="login-password" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" id="btn-submit-login" class="btn btn-primary" style="width:100%; margin-top:8px;">
+              Sign In to Workspace
+            </button>
+          </form>
+
+          <!-- Quick Fill Demo Chips -->
+          <div class="demo-credentials-box">
+            <span style="font-size:11px; font-weight:700; color:var(--muted-strong); text-transform:uppercase;">Quick Demonstration Accounts:</span>
+            <div class="demo-chips">
+              <button type="button" class="demo-chip" data-user="admin" data-pass="Admin@123">Admin (Chief)</button>
+              <button type="button" class="demo-chip" data-user="officer" data-pass="Officer@123">Officer (Assessment)</button>
+              <button type="button" class="demo-chip" data-user="auditor" data-pass="Auditor@123">Auditor (Compliance)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       2. AUTHENTICATED APPLICATION SHELL
+       ======================================================================== -->
+  <div id="app-container" class="app-wrapper" style="display:none;">
+
+    <!-- Top Navigation Header -->
+    <header class="fiscal-header">
+      <div class="brand-container" onclick="FiscalApp.navigateTo('overview')">
+        <div class="brand-logo-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+            <path d="M8 7h8"/>
+            <path d="M8 11h6"/>
+          </svg>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title">FISCAL</span>
+          <span class="brand-descriptor">CUSTOM TAX MANAGEMENT</span>
+        </div>
+      </div>
+
+      <!-- Segmented Navigation Bar -->
+      <nav class="fiscal-nav">
+        <a class="nav-item active" data-view="overview">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Overview
+        </a>
+        <a class="nav-item" data-view="taxpayers">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+          Taxpayers
+        </a>
+        <a class="nav-item" data-view="tax-types">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          Tax Types
+        </a>
+        <a class="nav-item" data-view="assessment">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01"/></svg>
+          Assessment
+        </a>
+        <a class="nav-item" data-view="payments">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Payments
+        </a>
+        <a id="nav-item-users" class="nav-item" data-view="users" style="display:none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Operators
+        </a>
+        <a class="nav-item" data-view="about">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          About Us
+        </a>
+      </nav>
+
+      <!-- User Profile & Sign Out -->
+      <div class="header-actions">
+        <div class="user-profile-badge">
+          <div id="header-user-avatar" class="user-avatar">AD</div>
+          <div class="user-meta">
+            <span id="header-user-name" class="user-name">Administrator</span>
+            <span id="header-user-role" class="user-role">ADMIN</span>
+          </div>
+        </div>
+        <button id="btn-logout" class="btn btn-secondary btn-sm" title="Log Out">
+          Sign Out
+        </button>
+      </div>
+    </header>
+
+    <!-- Sub-Header Technical Banner -->
+    <div class="system-status-banner">
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span>ORACLE JDBC ACTIVE • REPOSITORY PERSISTENCE VERIFIED</span>
+      </div>
+      <div style="font-family:var(--font-technical); color:var(--muted); font-size:10px;">
+        TRANSACTION ISOLATION: READ COMMITTED • COMMIT/ROLLBACK ENABLED
+      </div>
+    </div>
+
+    <!-- Main Dynamic Content Workspace -->
+    <main class="main-content">
+
+      <!-- ====================================================================
+           VIEW: OVERVIEW (DASHBOARD)
+           ==================================================================== -->
+      <section id="view-overview" class="view-section">
+        <div class="view-header">
+          <div class="view-preheader">FINANCIAL OVERVIEW / 01</div>
+          <div class="view-title-row">
+            <div>
+              <h2 class="view-title">Your finances, in focus.</h2>
+              <p class="view-subtitle">Tax records, payment activity, and outstanding obligations in one clear view.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="FiscalApp.navigateTo('assessment')">
+                Run Tax Assessment
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Database Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card tactile-surface">
+            <div class="metric-header">
+              <span class="metric-label">Total Taxpayers</span>
+              <div class="metric-icon-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              </div>
+            </div>
+            <div class="metric-value-row">
+              <span id="metric-total-taxpayers" class="metric-value">0</span>
+              <span class="metric-unit">registered</span>
+            </div>
+            <div class="metric-footnote">Oracle TAXPAYER master table</div>
+          </div>
+
+          <div class="metric-card tactile-surface accent-info">
+            <div class="metric-header">
+              <span class="metric-label">Total Payments</span>
+              <div class="metric-icon-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+            </div>
+            <div class="metric-value-row">
+              <span id="metric-total-payments" class="metric-value">0</span>
+              <span class="metric-unit">transactions</span>
+            </div>
+            <div class="metric-footnote">Oracle TAX_PAYMENT ledger</div>
+          </div>
+
+          <div class="metric-card tactile-surface">
+            <div class="metric-header">
+              <span class="metric-label">Total Revenue Paid</span>
+              <div class="metric-icon-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+            </div>
+            <div class="metric-value-row">
+              <span id="metric-total-paid" class="metric-value">₹0.00</span>
+            </div>
+            <div class="metric-footnote">Status: Verified 'PAID' remittances</div>
+          </div>
+
+          <div class="metric-card tactile-surface accent-warning">
+            <div class="metric-header">
+              <span class="metric-label">Pending Collection</span>
+              <div class="metric-icon-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+            </div>
+            <div class="metric-value-row">
+              <span id="metric-total-pending" class="metric-value">₹0.00</span>
+            </div>
+            <div class="metric-footnote">Awaiting bank verification</div>
+          </div>
+        </div>
+
+        <!-- Featured Split Grid -->
+        <div class="dashboard-split-grid">
+          
+          <!-- Recent Payments Ledger Table -->
+          <div class="section-box tactile-surface">
+            <div class="section-header-row">
+              <span class="section-title">Recent Tax Payments Ledger</span>
+              <button class="btn btn-secondary btn-sm" onclick="FiscalApp.navigateTo('payments')">View All Ledger</button>
+            </div>
+            <div class="table-container">
+              <table class="fiscal-table">
+                <thead>
+                  <tr>
+                    <th>Ref ID</th>
+                    <th>Taxpayer</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-recent-payments-tbody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Category Breakdown & Status Distribution -->
+          <div style="display:flex; flex-direction:column; gap:var(--space-6);">
+            
+            <div class="section-box tactile-surface">
+              <div class="section-header-row">
+                <span class="section-title">Revenue by Tax Category</span>
+              </div>
+              <div id="dashboard-category-bars" class="category-bar-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <div class="section-box tactile-surface">
+              <div class="section-header-row">
+                <span class="section-title">Payment Status Distribution</span>
+              </div>
+              <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <div style="flex:1; padding:12px; background:var(--surface); border-radius:var(--radius-small); text-align:center;">
+                  <span class="badge badge-paid">PAID</span>
+                  <div id="dist-paid-count" class="mono font-technical" style="font-size:22px; font-weight:800; margin-top:6px;">0</div>
+                </div>
+                <div style="flex:1; padding:12px; background:var(--surface); border-radius:var(--radius-small); text-align:center;">
+                  <span class="badge badge-pending">PENDING</span>
+                  <div id="dist-pending-count" class="mono font-technical" style="font-size:22px; font-weight:800; margin-top:6px;">0</div>
+                </div>
+                <div style="flex:1; padding:12px; background:var(--surface); border-radius:var(--radius-small); text-align:center;">
+                  <span class="badge badge-reversed">REVERSED</span>
+                  <div id="dist-reversed-count" class="mono font-technical" style="font-size:22px; font-weight:800; margin-top:6px;">0</div>
+                </div>
+              </div>
+              <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">
+                <div style="font-size:11px; font-family:var(--font-technical); color:var(--muted);">ANNUAL MONITORED GROSS INCOME</div>
+                <div id="metric-gross-income" class="mono" style="font-size:18px; font-weight:700;">₹0.00</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW: TAXPAYERS
+           ==================================================================== -->
+      <section id="view-taxpayers" class="view-section" style="display:none;">
+        <div class="view-header">
+          <div class="view-preheader">TAXPAYER REGISTRY / 02</div>
+          <div class="view-title-row">
+            <div>
+              <h2 class="view-title">Know every taxpayer.</h2>
+              <p class="view-subtitle">Keep taxpayer information organized, accessible, and accurate.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="FiscalApp.openModal('modal-add-taxpayer')">
+                + Register Taxpayer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Toolbar -->
+        <div class="filter-toolbar">
+          <div class="filter-group-left">
+            <div class="input-with-icon search-input-field">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="filter-taxpayer-search" class="form-input" placeholder="Search by name or PAN...">
+            </div>
+            <select id="filter-taxpayer-city" class="form-select" style="max-width:180px;">
+              <option value="ALL">All Cities</option>
+            </select>
+          </div>
+          <div>
+            <select id="filter-taxpayer-sort" class="form-select" style="max-width:200px;">
+              <option value="id_asc">Sort by ID (Asc)</option>
+              <option value="name_asc">Sort by Name (A-Z)</option>
+              <option value="income_desc">Income (Highest first)</option>
+              <option value="income_asc">Income (Lowest first)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Taxpayer Table -->
+        <div class="table-container">
+          <table class="fiscal-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Taxpayer Demographic</th>
+                <th>PAN Number</th>
+                <th>City</th>
+                <th>Declared Income</th>
+                <th>Tax Paid (Ledger)</th>
+                <th style="text-align:center;">Payments</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="taxpayers-tbody">
+              <!-- Injected via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW: TAX TYPES & RATES
+           ==================================================================== -->
+      <section id="view-tax-types" class="view-section" style="display:none;">
+        <div class="view-header">
+          <div class="view-preheader">CONFIGURED TAX RULES / 03</div>
+          <div class="view-title-row">
+            <div>
+              <h2 class="view-title">Define the tax.</h2>
+              <p class="view-subtitle">Keep tax categories and configured rates consistent across your records.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="FiscalApp.openModal('modal-add-taxtype')">
+                + New Tax Category
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="taxtypes-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:var(--space-6);">
+          <!-- Injected via JavaScript -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW: ASSESSMENT CALCULATOR WORKBENCH
+           ==================================================================== -->
+      <section id="view-assessment" class="view-section" style="display:none;">
+        <div class="view-header">
+          <div class="view-preheader">STATUTORY ASSESSMENT / 04</div>
+          <div class="view-title-row">
+            <div>
+              <h2 class="view-title">Calculate with clarity.</h2>
+              <p class="view-subtitle">Use the configured tax rules to calculate an amount and keep the result traceable.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="calculator-grid">
+          
+          <!-- Assessment Input Card -->
+          <div class="calc-form-card tactile-surface">
+            <h3 style="font-size:18px; margin-bottom:16px;">Tax Liability Assessment Parameter</h3>
+            <form id="form-calculate-tax">
+              <div class="form-group">
+                <label class="form-label" for="calc-taxpayer-select">Select Registered Taxpayer</label>
+                <select id="calc-taxpayer-select" class="form-select" required>
+                  <option value="">Loading taxpayers from database...</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-taxtype-select">Select Statutory Tax Category</label>
+                <select id="calc-taxtype-select" class="form-select" required>
+                  <option value="">Loading tax rules...</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-taxable-amount">Applicable Taxable Amount (₹)</label>
+                <input type="number" step="0.01" min="0" id="calc-taxable-amount" class="form-input" placeholder="e.g. 1850000.00" required>
+                <span style="font-size:11px; color:var(--muted);">Defaults to taxpayer's declared annual income. You may adjust for specific quarterly assessments.</span>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width:100%; margin-top:12px;">
+                Execute Statutory Calculation
+              </button>
+            </form>
+          </div>
+
+          <!-- Authoritative Calculation Result Card -->
+          <div id="calc-result-panel" class="calc-result-card" style="display:none;">
+            <div class="calc-result-badge">OFFICIAL CALCULATION ESTIMATE</div>
+            <div style="font-size:11px; font-family:var(--font-technical); color:var(--muted-strong); margin-bottom:4px;">CALCULATED TAX LIABILITY</div>
+            <div id="calc-res-amount" class="calc-amount-display">₹0.00</div>
+            
+            <div id="calc-res-formula" class="calc-formula-display">
+              Formula: Amount × Rate% ÷ 100
+            </div>
+
+            <div class="calc-breakdown-table">
+              <div class="calc-breakdown-row">
+                <span class="calc-breakdown-label">Taxpayer Name</span>
+                <span id="calc-res-tp-name" class="calc-breakdown-val">—</span>
+              </div>
+              <div class="calc-breakdown-row">
+                <span class="calc-breakdown-label">Permanent Account Number (PAN)</span>
+                <span id="calc-res-tp-pan" class="calc-breakdown-val mono">—</span>
+              </div>
+              <div class="calc-breakdown-row">
+                <span class="calc-breakdown-label">Tax Category</span>
+                <span id="calc-res-tt-name" class="calc-breakdown-val">—</span>
+              </div>
+              <div class="calc-breakdown-row">
+                <span class="calc-breakdown-label">Configured Percentage Rate</span>
+                <span id="calc-res-rate" class="calc-breakdown-val mono">—</span>
+              </div>
+              <div class="calc-breakdown-row">
+                <span class="calc-breakdown-label">Applicable Taxable Base</span>
+                <span id="calc-res-applicable" class="calc-breakdown-val mono">—</span>
+              </div>
+              <div class="calc-breakdown-row">
+                <span class="calc-breakdown-label">Calculation Timestamp</span>
+                <span id="calc-res-timestamp" class="calc-breakdown-val mono">—</span>
+              </div>
+            </div>
+
+            <div style="background:var(--surface-raised); border-radius:var(--radius-small); padding:12px; margin-bottom:16px; border:1px solid var(--border); font-size:12px; color:var(--muted-strong);">
+              <strong>Regulatory Notice:</strong> A calculated estimate is an assessment record and does not automatically constitute a completed payment until formally committed to the ledger.
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="FiscalApp.convertCalcToPayment()" style="width:100%;">
+              Commit Assessment to Payment Ledger
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW: PAYMENTS LEDGER
+           ==================================================================== -->
+      <section id="view-payments" class="view-section" style="display:none;">
+        <div class="view-header">
+          <div class="view-preheader">PAYMENT LEDGER / 05</div>
+          <div class="view-title-row">
+            <div>
+              <h2 class="view-title">Every payment, accounted for.</h2>
+              <p class="view-subtitle">Track payment records with clear amounts, dates, and statuses.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="FiscalApp.openRecordPaymentModalWithPreFill()">
+                + Record Tax Payment
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Toolbar -->
+        <div class="filter-toolbar">
+          <div class="filter-group-left">
+            <div class="input-with-icon search-input-field">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="filter-payment-search" class="form-input" placeholder="Search reference, taxpayer, or PAN...">
+            </div>
+            <select id="filter-payment-status" class="form-select" style="max-width:160px;">
+              <option value="ALL">All Statuses</option>
+              <option value="PAID">Paid Only</option>
+              <option value="PENDING">Pending Only</option>
+              <option value="REVERSED">Reversed</option>
+            </select>
+            <select id="filter-payment-taxtype" class="form-select" style="max-width:180px;">
+              <option value="ALL">All Categories</option>
+            </select>
+          </div>
+          <div>
+            <select id="filter-payment-sort" class="form-select" style="max-width:180px;">
+              <option value="date_desc">Latest Date First</option>
+              <option value="date_asc">Oldest Date First</option>
+              <option value="amount_desc">Amount (Highest)</option>
+              <option value="amount_asc">Amount (Lowest)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Payments Table -->
+        <div class="table-container">
+          <table class="fiscal-table">
+            <thead>
+              <tr>
+                <th>Payment Ref</th>
+                <th>Taxpayer Name & PAN</th>
+                <th>Category</th>
+                <th>Amount (₹)</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="payments-tbody">
+              <!-- Injected via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW: OPERATORS / SYSTEM ADMIN (Role Gated)
+           ==================================================================== -->
+      <section id="view-users" class="view-section" style="display:none;">
+        <div class="view-header">
+          <div class="view-preheader">SYSTEM ADMINISTRATION / 06</div>
+          <div class="view-title-row">
+            <div>
+              <h2 class="view-title">System Operators</h2>
+              <p class="view-subtitle">Manage operator accounts, access roles, and cryptographic credentials.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="FiscalApp.openModal('modal-add-user')">
+                + Create Operator Account
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="fiscal-table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Full Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Account Status</th>
+                <th>Created Date</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW: ABOUT US (PROJECT SPECIFICATION & ACADEMIC PROVENANCE)
+           ==================================================================== -->
+      <section id="view-about" class="view-section" style="display:none;">
+        <div class="view-header">
+          <div class="view-preheader">PROJECT SPECIFICATION & ACADEMIC CREDITS / 07</div>
+          <div class="view-title-row">
+            <div>
+              <h2 class="view-title">About FISCAL & Academic Provenance</h2>
+              <p class="view-subtitle">An authoritative custom tax management system engineered for clarity, mathematical rigor, and institutional compliance.</p>
+            </div>
+            <div class="view-actions">
+              <span class="about-pill institution">VIT CHENNAI • DBMS PAT PROJECT</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. ALL ABOUT THE WEBSITE & SYSTEM -->
+        <div class="about-hero-card">
+          <div class="about-badge-row">
+            <span class="about-pill">ORACLE 23ai / 19c ENTERPRISE</span>
+            <span class="about-pill">JAVA 17 SERVLETS + JDBC</span>
+            <span class="about-pill">MATCHA & MILK HONEY DESIGN SYSTEM</span>
+            <span class="about-pill">FIPS-COMPLIANT PBKDF2</span>
+          </div>
+
+          <h3 style="font-family:var(--font-display); font-size:24px; font-weight:800; color:var(--ink); margin-bottom:12px; letter-spacing:-0.02em;">
+            Clarity in every calculation.
+          </h3>
+          <p style="font-size:14.5px; color:var(--ink-secondary); line-height:1.65; max-width:880px; margin-bottom:24px;">
+            <strong>FISCAL</strong> is a specialized enterprise tax management workspace engineered to bring order, transparency, and computational integrity to corporate and personal tax operations. In conventional administrative environments, tax records often suffer from fragmented spreadsheets, opaque calculation rules, unvalidated inputs, and sterile accounting software. FISCAL eliminates these pain points by uniting an authoritative Oracle Database relational ledger with server-side statutory calculation engines, atomic transactions, and a bespoke tactile user interface.
+          </p>
+
+          <!-- Core System Pillars Grid -->
+          <div class="about-features-grid">
+            <div class="about-feature-box">
+              <div class="about-feature-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              </div>
+              <h4 class="about-feature-title">Authoritative Taxpayer Registry</h4>
+              <p class="about-feature-desc">
+                Centralized demographics and income profiling with regex validation on statutory Permanent Account Numbers (PAN), age boundary enforcement (18–120), and privacy-first PAN masking in public displays.
+              </p>
+            </div>
+
+            <div class="about-feature-box">
+              <div class="about-feature-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </div>
+              <h4 class="about-feature-title">Statutory Tax Category Engine</h4>
+              <p class="about-feature-desc">
+                Configurable governance of statutory assessment categories (Income Tax, GST, Capital Gains, Corporate Tax, Professional Tax, Luxury Surcharges) with percentage rate bounds and referential integrity protection against accidental deletion.
+              </p>
+            </div>
+
+            <div class="about-feature-box">
+              <div class="about-feature-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/></svg>
+              </div>
+              <h4 class="about-feature-title">Mathematical Calculation Workbench</h4>
+              <p class="about-feature-desc">
+                Server-side statutory computation executing the authoritative formula: <code>Tax Amount = Applicable Amount × Tax Rate / 100</code> with strict <code>RoundingMode.HALF_UP</code> precision, converted into formal ledger entries with one click.
+              </p>
+            </div>
+
+            <div class="about-feature-box">
+              <div class="about-feature-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <h4 class="about-feature-title">Multi-State Ledger & Audit Trails</h4>
+              <p class="about-feature-desc">
+                State machine tracking transitions across <code>PAID</code>, <code>PENDING</code>, and <code>REVERSED</code> ledger statuses, paired with unique transaction reference identifiers (<code>FSC-2026-XXXX</code>) and atomic database commits.
+              </p>
+            </div>
+
+            <div class="about-feature-box">
+              <div class="about-feature-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h4 class="about-feature-title">Cryptographic Session Security</h4>
+              <p class="about-feature-desc">
+                FIPS-grade password security using PBKDF2WithHmacSHA256 (10,000 iterations, 32-byte hashes, 16-byte random salts), session fixation rotation, HttpOnly cookie flags, and role-based access control (Admin, Officer, Auditor).
+              </p>
+            </div>
+
+            <div class="about-feature-box">
+              <div class="about-feature-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+              <h4 class="about-feature-title">Dual-Mode Persistence Architecture</h4>
+              <p class="about-feature-desc">
+                Seamless operation with live Oracle 19c/23ai instances via thin JDBC connection pools, backed by an autonomous offline resilient repository with 100% feature and seed-data parity when standalone.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. ACADEMIC CREDITS & DEVELOPER SPOTLIGHT (BELOW WEBSITE INFO) -->
+        <div class="about-credits-section">
+          <div class="about-credits-header">
+            <div>
+              <div class="view-preheader">ACADEMIC PROVENANCE & INSTITUTION</div>
+              <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--ink); margin-top:2px;">
+                Vellore Institute of Technology (VIT), Chennai
+              </h3>
+              <p style="font-size:13px; color:var(--muted-strong); margin-top:2px;">
+                Department of Computer Science & Engineering • School of Computer Science & Engineering (SCOPE)
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <span class="about-pill institution">BACSE202 — Database Systems</span>
+              <span class="about-pill faculty">PAT Course Project</span>
+            </div>
+          </div>
+
+          <!-- Profiles Grid: Faculty Guide & Student Developer -->
+          <div class="about-profiles-grid">
+            
+            <!-- Faculty Guide Profile Card -->
+            <div class="profile-card">
+              <div class="profile-avatar faculty">AS</div>
+              <div class="profile-info">
+                <span class="profile-role-badge">Faculty Guide & Project Mentor</span>
+                <h4 class="profile-name">Prof. A SWAMINATHAN</h4>
+                <div class="profile-designation">Assistant Professor Senior Grade 2</div>
+                <div class="profile-department">
+                  School of Computer Science & Engineering (SCOPE)<br>
+                  Vellore Institute of Technology (VIT), Chennai Campus
+                </div>
+                <div class="profile-meta-list">
+                  <div class="profile-meta-item">
+                    <strong>Course:</strong> <span>BACSE202 — Database Systems (DBMS)</span>
+                  </div>
+                  <div class="profile-meta-item">
+                    <strong>Campus Office:</strong> <span>DELTA--3F (Delta Block, 3rd Floor), VIT Chennai</span>
+                  </div>
+                  <div class="profile-meta-item">
+                    <strong>Mentorship:</strong> <span>Guided relational schema normalization, constraint hierarchies, trigger design, Oracle sequences, and transaction isolation integrity.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Student Developer Profile Card -->
+            <div class="profile-card">
+              <div class="profile-avatar">AR</div>
+              <div class="profile-info">
+                <span class="profile-role-badge">Lead Developer & System Architect</span>
+                <h4 class="profile-name">Arpit Raj</h4>
+                <div class="profile-designation">Student, Computer Science & Engineering</div>
+                <div class="profile-department">
+                  School of Computer Science & Engineering (SCOPE)<br>
+                  Vellore Institute of Technology (VIT), Chennai Campus
+                </div>
+                <div class="profile-meta-list">
+                  <div class="profile-meta-item">
+                    <strong>Institution:</strong> <span>VIT Chennai, Tamil Nadu, India</span>
+                  </div>
+                  <div class="profile-meta-item">
+                    <strong>Academic Course:</strong> <span>Database Systems (BACSE202)</span>
+                  </div>
+                  <div class="profile-meta-item">
+                    <strong>Contributions:</strong> <span>Full-stack architecture, Oracle DDL/DML, Java Servlets & JDBC layer, mathematical tax engine, and bespoke editorial Matcha design system.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Project Academic Metadata Table -->
+          <div style="margin-top:var(--space-6);">
+            <h4 style="font-family:var(--font-technical); font-size:12px; font-weight:700; color:var(--muted-strong); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">
+              Academic Project Specifications
+            </h4>
+            <table class="academic-specs-table">
+              <tbody>
+                <tr>
+                  <td class="spec-key">Project Title</td>
+                  <td class="spec-val"><strong>FISCAL — Custom Tax Management System</strong> (PAT Academic Project)</td>
+                </tr>
+                <tr>
+                  <td class="spec-key">Institution</td>
+                  <td class="spec-val"><strong>Vellore Institute of Technology (VIT), Chennai</strong> (Vandalur-Kelambakkam Road, Chennai 600127)</td>
+                </tr>
+                <tr>
+                  <td class="spec-key">Course Code & Name</td>
+                  <td class="spec-val"><strong>BACSE202 — Database Systems</strong> (DBMS)</td>
+                </tr>
+                <tr>
+                  <td class="spec-key">Faculty In-Charge / Guide</td>
+                  <td class="spec-val"><strong>Prof. A SWAMINATHAN</strong> (Assistant Professor Senior Grade 2, VIT Chennai)</td>
+                </tr>
+                <tr>
+                  <td class="spec-key">Project Author & Developer</td>
+                  <td class="spec-val"><strong>Arpit Raj</strong> (School of Computer Science & Engineering, VIT Chennai)</td>
+                </tr>
+                <tr>
+                  <td class="spec-key">Technology Stack</td>
+                  <td class="spec-val">Oracle AI Database 23ai / 19c, Java 17, Jakarta Servlets, JDBC PreparedStatement, Apache Tomcat 10+, HTML5, Vanilla CSS3 Tokens, Vanilla JavaScript ES6+, Three.js 3D Visualizer</td>
+                </tr>
+                <tr>
+                  <td class="spec-key">Database Schema Elements</td>
+                  <td class="spec-val">Tables (<code>TAXPAYER</code>, <code>TAX_TYPE</code>, <code>TAX_PAYMENT</code>, <code>APP_USER</code>), Sequences, Auto-increment Triggers, Check Constraints, Foreign Keys with Cascade, Unique Constraints (PAN)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ========================================================================
+       MODALS
+       ======================================================================== -->
+
+  <!-- Modal: Add Taxpayer -->
+  <div id="modal-add-taxpayer" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Register New Taxpayer</h3>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-add-taxpayer')">✕</button>
+      </div>
+      <form id="form-add-taxpayer">
+        <div class="form-group">
+          <label class="form-label" for="form-new-taxpayer-name">Full Name</label>
+          <input type="text" id="form-new-taxpayer-name" class="form-input" placeholder="e.g. Rajesh Kumar" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-new-taxpayer-pan">Statutory PAN (8 - 10 Characters)</label>
+          <input type="text" id="form-new-taxpayer-pan" class="form-input mono" placeholder="e.g. ABCDE1234F or DEMO00006" pattern="[A-Za-z0-9]{8,10}" maxlength="10" required title="Enter 8-10 character PAN (e.g. ABCDE1234F or DEMO00006)">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
+          <div class="form-group">
+            <label class="form-label" for="form-new-taxpayer-age">Age (18 - 120)</label>
+            <input type="number" id="form-new-taxpayer-age" class="form-input" min="18" max="120" value="35" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="form-new-taxpayer-city">City</label>
+            <input type="text" id="form-new-taxpayer-city" class="form-input" placeholder="e.g. Mumbai" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-new-taxpayer-income">Declared Annual Income (₹)</label>
+          <input type="number" step="0.01" min="0" id="form-new-taxpayer-income" class="form-input" placeholder="e.g. 2500000.00" required>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--space-3); margin-top:var(--space-6);">
+          <button type="button" class="btn btn-secondary" onclick="FiscalApp.closeModal('modal-add-taxpayer')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save to Oracle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Taxpayer -->
+  <div id="modal-edit-taxpayer" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Taxpayer Information</h3>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-edit-taxpayer')">✕</button>
+      </div>
+      <form id="form-edit-taxpayer">
+        <input type="hidden" id="form-edit-taxpayer-id">
+        <div class="form-group">
+          <label class="form-label" for="form-edit-taxpayer-name">Full Name</label>
+          <input type="text" id="form-edit-taxpayer-name" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-edit-taxpayer-pan">PAN Number</label>
+          <input type="text" id="form-edit-taxpayer-pan" class="form-input mono" pattern="[A-Za-z0-9]{8,10}" maxlength="10" required>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
+          <div class="form-group">
+            <label class="form-label" for="form-edit-taxpayer-age">Age</label>
+            <input type="number" id="form-edit-taxpayer-age" class="form-input" min="18" max="120" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="form-edit-taxpayer-city">City</label>
+            <input type="text" id="form-edit-taxpayer-city" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-edit-taxpayer-income">Declared Income (₹)</label>
+          <input type="number" step="0.01" min="0" id="form-edit-taxpayer-income" class="form-input" required>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--space-3); margin-top:var(--space-6);">
+          <button type="button" class="btn btn-secondary" onclick="FiscalApp.closeModal('modal-edit-taxpayer')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Taxpayer Details & Ledger -->
+  <div id="modal-taxpayer-details" class="modal-overlay">
+    <div class="modal-card" style="max-width:750px;">
+      <div class="modal-header">
+        <div>
+          <span style="font-size:11px; font-family:var(--font-technical); color:var(--muted-strong);">TAXPAYER PROFILE</span>
+          <h3 id="modal-taxpayer-name" class="modal-title">—</h3>
+        </div>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-taxpayer-details')">✕</button>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">System Taxpayer ID</span>
+          <span id="detail-tp-id" class="detail-value mono">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">PAN Number</span>
+          <span id="detail-tp-pan" class="detail-value mono">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Age & Demographics</span>
+          <span id="detail-tp-age" class="detail-value">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Residential City</span>
+          <span id="detail-tp-city" class="detail-value">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Declared Gross Income</span>
+          <span id="detail-tp-income" class="detail-value mono">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Total Tax Paid (Verified)</span>
+          <span id="detail-tp-totalpaid" class="detail-value mono text-muted-strong">—</span>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="font-family:var(--font-technical); font-size:12px; margin-bottom:10px; color:var(--muted-strong);">ASSOCIATED TAX PAYMENT LEDGER</h4>
+        <div class="table-container">
+          <table class="fiscal-table">
+            <thead>
+              <tr>
+                <th>Ref ID</th>
+                <th>Category</th>
+                <th>Amount (₹)</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="detail-tp-payments-tbody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; margin-top:24px;">
+        <button class="btn btn-secondary" onclick="FiscalApp.closeModal('modal-taxpayer-details')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add Tax Type -->
+  <div id="modal-add-taxtype" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Create Tax Category</h3>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-add-taxtype')">✕</button>
+      </div>
+      <form id="form-add-taxtype">
+        <div class="form-group">
+          <label class="form-label" for="form-new-taxtype-name">Tax Name</label>
+          <input type="text" id="form-new-taxtype-name" class="form-input" placeholder="e.g. Environmental Carbon Levy" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-new-taxtype-rate">Statutory Rate (%)</label>
+          <input type="number" step="0.01" min="0" max="100" id="form-new-taxtype-rate" class="form-input" placeholder="e.g. 12.50" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-new-taxtype-desc">Description & Statutory Rule</label>
+          <textarea id="form-new-taxtype-desc" class="form-textarea" rows="3" placeholder="Statutory assessment rules and context..."></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--space-3); margin-top:var(--space-6);">
+          <button type="button" class="btn btn-secondary" onclick="FiscalApp.closeModal('modal-add-taxtype')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Tax Type -->
+  <div id="modal-edit-taxtype" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Tax Category</h3>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-edit-taxtype')">✕</button>
+      </div>
+      <form id="form-edit-taxtype">
+        <input type="hidden" id="form-edit-taxtype-id">
+        <div class="form-group">
+          <label class="form-label" for="form-edit-taxtype-name">Tax Name</label>
+          <input type="text" id="form-edit-taxtype-name" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-edit-taxtype-rate">Statutory Rate (%)</label>
+          <input type="number" step="0.01" min="0" max="100" id="form-edit-taxtype-rate" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-edit-taxtype-desc">Description</label>
+          <textarea id="form-edit-taxtype-desc" class="form-textarea" rows="3"></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--space-3); margin-top:var(--space-6);">
+          <button type="button" class="btn btn-secondary" onclick="FiscalApp.closeModal('modal-edit-taxtype')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Record Tax Payment -->
+  <div id="modal-add-payment" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Tax Remittance</h3>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-add-payment')">✕</button>
+      </div>
+      <form id="form-add-payment">
+        <div class="form-group">
+          <label class="form-label" for="form-payment-taxpayer-id">Taxpayer</label>
+          <select id="form-payment-taxpayer-id" class="form-select" required>
+            <option value="">Select Taxpayer...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-payment-tax-id">Tax Category</label>
+          <select id="form-payment-tax-id" class="form-select" required>
+            <option value="">Select Tax Category...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-payment-amount">Payment Amount (₹)</label>
+          <input type="number" step="0.01" min="0.01" id="form-payment-amount" class="form-input" placeholder="e.g. 277500.00" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-payment-status">Payment Status</label>
+          <select id="form-payment-status" class="form-select" required>
+            <option value="PAID">PAID (Clearance confirmed)</option>
+            <option value="PENDING">PENDING (Awaiting settlement)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-payment-remarks">Ledger Remarks / Batch Note</label>
+          <input type="text" id="form-payment-remarks" class="form-input" placeholder="e.g. Advance statutory installment">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--space-3); margin-top:var(--space-6);">
+          <button type="button" class="btn btn-secondary" onclick="FiscalApp.closeModal('modal-add-payment')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Commit to Ledger</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Update Payment Status -->
+  <div id="modal-update-status" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Update Payment Status</h3>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-update-status')">✕</button>
+      </div>
+      <form id="form-update-status">
+        <input type="hidden" id="form-status-payment-id">
+        <div class="form-group">
+          <label class="form-label" for="form-status-select">Transaction Status</label>
+          <select id="form-status-select" class="form-select" required>
+            <option value="PAID">PAID (Bank clearance confirmed)</option>
+            <option value="PENDING">PENDING (Under review / transit)</option>
+            <option value="REVERSED">REVERSED (Audit reversal / cancelled)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-status-remarks">Audit Log Remarks</label>
+          <input type="text" id="form-status-remarks" class="form-input" placeholder="Reason for status transition...">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--space-3); margin-top:var(--space-6);">
+          <button type="button" class="btn btn-secondary" onclick="FiscalApp.closeModal('modal-update-status')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Commit Status Change</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Create Operator User (Admin) -->
+  <div id="modal-add-user" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Create Operator Account</h3>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-add-user')">✕</button>
+      </div>
+      <form id="form-add-user">
+        <div class="form-group">
+          <label class="form-label" for="form-new-user-fullname">Full Name</label>
+          <input type="text" id="form-new-user-fullname" class="form-input" placeholder="e.g. Anita Roy" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-new-user-username">Username</label>
+          <input type="text" id="form-new-user-username" class="form-input" placeholder="e.g. anita" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-new-user-email">Email Address</label>
+          <input type="email" id="form-new-user-email" class="form-input" placeholder="anita@fiscal.internal" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-new-user-password">Initial Password</label>
+          <input type="password" id="form-new-user-password" class="form-input" placeholder="••••••••••••" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="form-new-user-role">Assigned Role</label>
+          <select id="form-new-user-role" class="form-select" required>
+            <option value="OFFICER">OFFICER (Tax Assessment & Payments)</option>
+            <option value="AUDITOR">AUDITOR (Read-only Compliance Review)</option>
+            <option value="ADMIN">ADMIN (Full System Privileges)</option>
+          </select>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--space-3); margin-top:var(--space-6);">
+          <button type="button" class="btn btn-secondary" onclick="FiscalApp.closeModal('modal-add-user')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: About Website & Academic Provenance (Accessible from Login) -->
+  <div id="modal-about-dialog" class="modal-overlay">
+    <div class="modal-card" style="max-width:920px; max-height:90vh; overflow-y:auto;">
+      <div class="modal-header" style="position:sticky; top:0; background:var(--surface-white); z-index:10; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:18px;">
+        <div>
+          <span style="font-size:11px; font-family:var(--font-technical); color:var(--muted-strong); letter-spacing:0.05em;">SYSTEM SPECIFICATION & ACADEMIC CREDITS</span>
+          <h3 class="modal-title">About FISCAL — Custom Tax Management</h3>
+        </div>
+        <button class="modal-close-btn" onclick="FiscalApp.closeModal('modal-about-dialog')">✕</button>
+      </div>
+
+      <!-- 1. ALL ABOUT THE WEBSITE -->
+      <div class="about-hero-card" style="margin-bottom:20px; padding:20px;">
+        <div class="about-badge-row">
+          <span class="about-pill">ORACLE 23ai / 19c ENTERPRISE</span>
+          <span class="about-pill">JAVA 17 SERVLETS + JDBC</span>
+          <span class="about-pill">MATCHA & MILK HONEY PALETTE</span>
+          <span class="about-pill">PBKDF2 SECURITY</span>
+        </div>
+
+        <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--ink); margin-bottom:10px;">
+          Clarity in every calculation.
+        </h3>
+        <p style="font-size:14px; color:var(--ink-secondary); line-height:1.6; margin-bottom:18px;">
+          <strong>FISCAL</strong> is an authoritative custom tax management system engineered to eliminate spreadsheet errors, opaque tax assessments, and untracked ledger modifications. The application establishes a single source of truth backed by Oracle Database, authoritative server-side calculation routines, and a warm, editorial interface.
+        </p>
+
+        <div class="about-features-grid" style="margin-bottom:0; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+          <div class="about-feature-box">
+            <h4 class="about-feature-title" style="font-size:15px;">Demographic Registry</h4>
+            <p class="about-feature-desc" style="font-size:12.5px;">Regex-validated PAN format, strict age bounds (18–120), and masked display for taxpayer privacy.</p>
+          </div>
+          <div class="about-feature-box">
+            <h4 class="about-feature-title" style="font-size:15px;">Statutory Tax Rules</h4>
+            <p class="about-feature-desc" style="font-size:12.5px;">Configurable statutory categories (Income Tax, GST, Capital Gains, Corporate Tax) with rate bounds.</p>
+          </div>
+          <div class="about-feature-box">
+            <h4 class="about-feature-title" style="font-size:15px;">Calculation Workbench</h4>
+            <p class="about-feature-desc" style="font-size:12.5px;">Authoritative server-side formula <code>Tax = Amount × Rate / 100</code> with HALF_UP rounding precision.</p>
+          </div>
+          <div class="about-feature-box">
+            <h4 class="about-feature-title" style="font-size:15px;">Audit & Ledger Engine</h4>
+            <p class="about-feature-desc" style="font-size:12.5px;">Atomic transaction states (<code>PAID</code>, <code>PENDING</code>, <code>REVERSED</code>) with rollback and audit trail logging.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. ACADEMIC PROVENANCE & MENTORSHIP (BELOW WEBSITE INFO) -->
+      <div class="about-credits-section" style="padding:20px;">
+        <div class="about-credits-header" style="margin-bottom:16px;">
+          <div>
+            <div class="view-preheader">ACADEMIC PROVENANCE & INSTITUTION</div>
+            <h3 style="font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--ink); margin-top:2px;">
+              Vellore Institute of Technology (VIT), Chennai
+            </h3>
+            <p style="font-size:12.5px; color:var(--muted-strong); margin-top:2px;">
+              School of Computer Science & Engineering (SCOPE) • Database Systems (BACSE202)
+            </p>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <span class="about-pill institution">VIT CHENNAI</span>
+            <span class="about-pill faculty">DBMS PAT PROJECT</span>
+          </div>
+        </div>
+
+        <div class="about-profiles-grid" style="margin-bottom:16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+          
+          <!-- Faculty Guide -->
+          <div class="profile-card">
+            <div class="profile-avatar faculty">AS</div>
+            <div class="profile-info">
+              <span class="profile-role-badge">Faculty Guide & Project Mentor</span>
+              <h4 class="profile-name" style="font-size:17px;">Prof. A SWAMINATHAN</h4>
+              <div class="profile-designation">Assistant Professor Senior Grade 2</div>
+              <div class="profile-department">
+                School of Computer Science & Engineering (SCOPE)<br>
+                Vellore Institute of Technology (VIT), Chennai
+              </div>
+              <div class="profile-meta-list" style="font-size:11.5px;">
+                <div class="profile-meta-item">
+                  <strong>Course:</strong> <span>BACSE202 — Database Systems (DBMS)</span>
+                </div>
+                <div class="profile-meta-item">
+                  <strong>Campus Office:</strong> <span>DELTA--3F (Delta Block, 3rd Floor), VIT Chennai</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Student Developer -->
+          <div class="profile-card">
+            <div class="profile-avatar">AR</div>
+            <div class="profile-info">
+              <span class="profile-role-badge">Lead Developer & Architect</span>
+              <h4 class="profile-name" style="font-size:17px;">Arpit Raj</h4>
+              <div class="profile-designation">Student, B.Tech Computer Science & Engineering</div>
+              <div class="profile-department">
+                School of Computer Science & Engineering (SCOPE)<br>
+                Vellore Institute of Technology (VIT), Chennai
+              </div>
+              <div class="profile-meta-list" style="font-size:11.5px;">
+                <div class="profile-meta-item">
+                  <strong>Institution:</strong> <span>VIT Chennai, Tamil Nadu, India</span>
+                </div>
+                <div class="profile-meta-item">
+                  <strong>Curriculum:</strong> <span>Database Systems PAT Project</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="FiscalApp.closeModal('modal-about-dialog')">Done & Return</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Client-side JavaScript -->
+  <script src="assets/js/vendor/three.min.js"></script>
+  <script src="assets/js/fiscal-3d.js"></script>
+  <script src="assets/js/fiscal-api.js"></script>
+  <script src="assets/js/fiscal-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+/* ============================================================================
+   FISCAL — Custom Tax Management System
+   Design System Tokens (Minimal Curves & Premium Typography)
+   ============================================================================ */
+
+:root {
+  /* Primary brand colours — Refined Matcha & Clean Natural Stone Palette */
+  --matcha: #65753B;
+  --matcha-deep: #4F5D2C;
+  --matcha-dark: #3B4620;
+  --matcha-light: #C9D5A0;
+  --matcha-soft: #EBF0DC;
+
+  /* Surfaces & Canvas */
+  --milk-honey: #F6F4EB;
+  --paper: #F6F4EB;
+  --surface: #EEEAE0;
+  --surface-raised: #FFFFFF;
+  --surface-subtle: #FAF9F5;
+  --surface-white: #FFFFFF;
+
+  /* Text & Ink */
+  --ink: #171B12;
+  --ink-secondary: #323928;
+  --muted: #6B725F;
+  --muted-strong: #484E3D;
+
+  /* Borders & Dividers */
+  --border: #DBD5C7;
+  --border-strong: #C4BDAA;
+  --border-focus: #65753B;
+
+  /* Semantic status colors */
+  --danger: #AC3025;
+  --danger-soft: #FDF1F0;
+  --danger-border: #F6C8C4;
+
+  --warning: #875713;
+  --warning-soft: #FEF8EC;
+  --warning-border: #F3DEC0;
+
+  --success: #326428;
+  --success-soft: #EEF7EC;
+  --success-border: #BFE2B7;
+
+  --info: #245862;
+  --info-soft: #E9F4F6;
+  --info-border: #B7D9E0;
+
+  /* Shape & Curves - MINIMAL CURVES ACROSS ENTIRE APPLICATION */
+  --radius-xs: 2px;
+  --radius-small: 4px;
+  --radius-medium: 6px;
+  --radius-large: 8px;
+  --radius-pill: 4px; /* Crisp micro-tag style instead of giant bubbly pills */
+
+  /* Elevation Shadows */
+  --shadow-xs: 0 1px 2px rgba(23, 27, 18, 0.04);
+  --shadow-soft: 0 1px 3px rgba(23, 27, 18, 0.05), 0 4px 12px rgba(23, 27, 18, 0.04);
+  --shadow-raised: 0 4px 12px rgba(23, 27, 18, 0.07), 0 16px 32px rgba(23, 27, 18, 0.05);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Typography Stacks - Crisp, Modern, Balanced */
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-expressive: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-technical: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace;
+}
