@@ -25,7 +25,7 @@ public class TaxRecordDAO {
                 "SELECT tr.TAX_ID, tr.TAXPAYER_ID, tr.TAX_TYPE_ID, tr.TAX_AMOUNT, tr.STATUS, " +
                 "tp.NAME AS TAXPAYER_NAME, tp.PAN_NO AS TAXPAYER_PAN, " +
                 "tt.TAX_NAME, tt.TAX_RATE, " +
-                "NVL((SELECT SUM(p.AMOUNT_PAID) FROM TAX_PAYMENT p WHERE p.TAX_ID = tr.TAX_ID AND p.PAYMENT_STATUS = 'PAID'), 0) AS AMOUNT_PAID " +
+                "COALESCE((SELECT SUM(p.AMOUNT_PAID) FROM TAX_PAYMENT p WHERE p.TAX_ID = tr.TAX_ID AND p.PAYMENT_STATUS = 'PAID'), 0) AS AMOUNT_PAID " +
                 "FROM TAX_RECORD tr " +
                 "JOIN TAXPAYER tp ON tr.TAXPAYER_ID = tp.TAXPAYER_ID " +
                 "JOIN TAX_TYPE tt ON tr.TAX_TYPE_ID = tt.TAX_TYPE_ID " +
@@ -78,7 +78,7 @@ public class TaxRecordDAO {
             String sql = "SELECT tr.TAX_ID, tr.TAXPAYER_ID, tr.TAX_TYPE_ID, tr.TAX_AMOUNT, tr.STATUS, " +
                          "tp.NAME AS TAXPAYER_NAME, tp.PAN_NO AS TAXPAYER_PAN, " +
                          "tt.TAX_NAME, tt.TAX_RATE, " +
-                         "NVL((SELECT SUM(p.AMOUNT_PAID) FROM TAX_PAYMENT p WHERE p.TAX_ID = tr.TAX_ID AND p.PAYMENT_STATUS = 'PAID'), 0) AS AMOUNT_PAID " +
+                         "COALESCE((SELECT SUM(p.AMOUNT_PAID) FROM TAX_PAYMENT p WHERE p.TAX_ID = tr.TAX_ID AND p.PAYMENT_STATUS = 'PAID'), 0) AS AMOUNT_PAID " +
                          "FROM TAX_RECORD tr " +
                          "JOIN TAXPAYER tp ON tr.TAXPAYER_ID = tp.TAXPAYER_ID " +
                          "JOIN TAX_TYPE tt ON tr.TAX_TYPE_ID = tt.TAX_TYPE_ID " +
@@ -104,7 +104,7 @@ public class TaxRecordDAO {
         if (DatabaseConfig.isOracleReachable()) {
             String sql = "INSERT INTO TAX_RECORD (TAXPAYER_ID, TAX_TYPE_ID, TAX_AMOUNT, STATUS) VALUES (?, ?, ?, ?)";
             try (Connection conn = DatabaseConfig.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(sql, new String[]{"TAX_ID"})) {
+                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 conn.setAutoCommit(false);
                 ps.setLong(1, record.getTaxpayerId());
                 ps.setLong(2, record.getTaxTypeId());

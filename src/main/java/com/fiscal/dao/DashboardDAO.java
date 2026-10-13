@@ -46,7 +46,7 @@ public class DashboardDAO {
                 }
 
                 // 2. Gross monitored income across all registered taxpayers
-                try (PreparedStatement ps = conn.prepareStatement("SELECT NVL(SUM(INCOME), 0) FROM TAXPAYER");
+                try (PreparedStatement ps = conn.prepareStatement("SELECT COALESCE(SUM(INCOME), 0) FROM TAXPAYER");
                      ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) summary.setGrossTurnoverMonitored(rs.getBigDecimal(1));
                 }
@@ -54,9 +54,9 @@ public class DashboardDAO {
                 // 3. Payment counts and totals by status
                 String pSql = "SELECT " +
                               "(SELECT COUNT(*) FROM TAX_PAYMENT) AS TOTAL_CNT, " +
-                              "(SELECT NVL(SUM(AMOUNT_PAID), 0) FROM TAX_PAYMENT WHERE PAYMENT_STATUS = 'PAID') AS PAID_SUM, " +
-                              "(SELECT NVL(SUM(TAX_AMOUNT), 0) FROM TAX_RECORD WHERE STATUS = 'PENDING') AS PENDING_SUM, " +
-                              "(SELECT NVL(SUM(AMOUNT_PAID), 0) FROM TAX_PAYMENT WHERE PAYMENT_STATUS = 'REVERSED') AS REVERSED_SUM " +
+                              "(SELECT COALESCE(SUM(AMOUNT_PAID), 0) FROM TAX_PAYMENT WHERE PAYMENT_STATUS = 'PAID') AS PAID_SUM, " +
+                              "(SELECT COALESCE(SUM(TAX_AMOUNT), 0) FROM TAX_RECORD WHERE STATUS = 'PENDING') AS PENDING_SUM, " +
+                              "(SELECT COALESCE(SUM(AMOUNT_PAID), 0) FROM TAX_PAYMENT WHERE PAYMENT_STATUS = 'REVERSED') AS REVERSED_SUM " +
                               "FROM DUAL";
                 try (PreparedStatement ps = conn.prepareStatement(pSql);
                      ResultSet rs = ps.executeQuery()) {

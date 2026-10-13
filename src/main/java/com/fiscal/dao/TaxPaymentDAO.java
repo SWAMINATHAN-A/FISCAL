@@ -209,7 +209,7 @@ public class TaxPaymentDAO {
 
                     if (taxRecordId == null && payment.getTaxpayerId() != null && taxTypeId != null) {
                         String createRecSql = "INSERT INTO TAX_RECORD (TAXPAYER_ID, TAX_TYPE_ID, TAX_AMOUNT, STATUS) VALUES (?, ?, ?, ?)";
-                        try (PreparedStatement recPs = conn.prepareStatement(createRecSql, new String[]{"TAX_ID"})) {
+                        try (PreparedStatement recPs = conn.prepareStatement(createRecSql, Statement.RETURN_GENERATED_KEYS)) {
                             recPs.setLong(1, payment.getTaxpayerId());
                             recPs.setLong(2, taxTypeId);
                             recPs.setBigDecimal(3, payment.getAmount());
@@ -231,8 +231,8 @@ public class TaxPaymentDAO {
 
                     // 2. Insert into live Oracle TAX_PAYMENT
                     String insPaySql = "INSERT INTO TAX_PAYMENT (TAX_ID, AMOUNT_PAID, PAYMENT_DATE, PAYMENT_MODE, PAYMENT_STATUS) " +
-                                       "VALUES (?, ?, SYSDATE, ?, ?)";
-                    try (PreparedStatement psPay = conn.prepareStatement(insPaySql, new String[]{"PAYMENT_ID"})) {
+                                       "VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)";
+                    try (PreparedStatement psPay = conn.prepareStatement(insPaySql, Statement.RETURN_GENERATED_KEYS)) {
                         psPay.setLong(1, taxRecordId);
                         psPay.setBigDecimal(2, payment.getAmount());
                         String mode = (payment.getPaymentMode() != null && !payment.getPaymentMode().trim().isEmpty())
@@ -253,7 +253,7 @@ public class TaxPaymentDAO {
                             if ("PAID".equalsIgnoreCase(st)) {
                                 try (PreparedStatement updRec = conn.prepareStatement(
                                         "UPDATE TAX_RECORD SET STATUS = 'PAID' WHERE TAX_ID = ? AND TAX_AMOUNT <= " +
-                                        "(SELECT NVL(SUM(AMOUNT_PAID), 0) FROM TAX_PAYMENT WHERE TAX_ID = ? AND PAYMENT_STATUS = 'PAID')")) {
+                                        "(SELECT COALESCE(SUM(AMOUNT_PAID), 0) FROM TAX_PAYMENT WHERE TAX_ID = ? AND PAYMENT_STATUS = 'PAID')")) {
                                     updRec.setLong(1, taxRecordId);
                                     updRec.setLong(2, taxRecordId);
                                     updRec.executeUpdate();

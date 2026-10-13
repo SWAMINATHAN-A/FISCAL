@@ -35,7 +35,7 @@ public class TaxTypeDAO {
             StringBuilder sb = new StringBuilder(
                 "SELECT tt.TAX_TYPE_ID, tt.TAX_NAME, tt.TAX_RATE, " +
                 "COUNT(p.PAYMENT_ID) AS TRANSACTION_COUNT, " +
-                "NVL(SUM(CASE WHEN p.PAYMENT_STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS TOTAL_COLLECTED " +
+                "COALESCE(SUM(CASE WHEN p.PAYMENT_STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS TOTAL_COLLECTED " +
                 "FROM TAX_TYPE tt " +
                 "LEFT JOIN TAX_RECORD tr ON tt.TAX_TYPE_ID = tr.TAX_TYPE_ID " +
                 "LEFT JOIN TAX_PAYMENT p ON tr.TAX_ID = p.TAX_ID " +
@@ -104,7 +104,7 @@ public class TaxTypeDAO {
         if (DatabaseConfig.isOracleReachable()) {
             String sql = "SELECT tt.TAX_TYPE_ID, tt.TAX_NAME, tt.TAX_RATE, " +
                          "COUNT(p.PAYMENT_ID) AS TRANSACTION_COUNT, " +
-                         "NVL(SUM(CASE WHEN p.PAYMENT_STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS TOTAL_COLLECTED " +
+                         "COALESCE(SUM(CASE WHEN p.PAYMENT_STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS TOTAL_COLLECTED " +
                          "FROM TAX_TYPE tt " +
                          "LEFT JOIN TAX_RECORD tr ON tt.TAX_TYPE_ID = tr.TAX_TYPE_ID " +
                          "LEFT JOIN TAX_PAYMENT p ON tr.TAX_ID = p.TAX_ID " +
@@ -185,7 +185,7 @@ public class TaxTypeDAO {
         if (DatabaseConfig.isOracleReachable()) {
             String sql = "INSERT INTO TAX_TYPE (TAX_NAME, TAX_RATE) VALUES (?, ?)";
             try (Connection conn = DatabaseConfig.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(sql, new String[]{"TAX_TYPE_ID"})) {
+                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 conn.setAutoCommit(false);
                 ps.setString(1, taxType.getTaxName());
                 ps.setBigDecimal(2, taxType.getTaxRate());

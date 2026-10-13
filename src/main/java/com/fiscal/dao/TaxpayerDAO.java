@@ -34,7 +34,7 @@ public class TaxpayerDAO {
         if (DatabaseConfig.isOracleReachable()) {
             StringBuilder sb = new StringBuilder(
                 "SELECT t.TAXPAYER_ID, t.NAME, t.PAN_NO, t.AGE, t.CITY, t.INCOME, " +
-                "NVL(SUM(CASE WHEN p.PAYMENT_STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS TOTAL_PAID, " +
+                "COALESCE(SUM(CASE WHEN p.PAYMENT_STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS TOTAL_PAID, " +
                 "COUNT(p.PAYMENT_ID) AS PAYMENT_COUNT " +
                 "FROM TAXPAYER t " +
                 "LEFT JOIN TAX_RECORD tr ON t.TAXPAYER_ID = tr.TAXPAYER_ID " +
@@ -139,7 +139,7 @@ public class TaxpayerDAO {
 
         if (DatabaseConfig.isOracleReachable()) {
             String sql = "SELECT t.TAXPAYER_ID, t.NAME, t.PAN_NO, t.AGE, t.CITY, t.INCOME, " +
-                         "NVL(SUM(CASE WHEN p.PAYMENT_STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS TOTAL_PAID, " +
+                         "COALESCE(SUM(CASE WHEN p.PAYMENT_STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS TOTAL_PAID, " +
                          "COUNT(p.PAYMENT_ID) AS PAYMENT_COUNT " +
                          "FROM TAXPAYER t " +
                          "LEFT JOIN TAX_RECORD tr ON t.TAXPAYER_ID = tr.TAXPAYER_ID " +
@@ -221,7 +221,7 @@ public class TaxpayerDAO {
         if (DatabaseConfig.isOracleReachable()) {
             String sql = "INSERT INTO TAXPAYER (NAME, PAN_NO, AGE, CITY, INCOME) VALUES (?, ?, ?, ?, ?)";
             try (Connection conn = DatabaseConfig.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(sql, new String[]{"TAXPAYER_ID"})) {
+                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 conn.setAutoCommit(false);
                 ps.setString(1, taxpayer.getName());
                 ps.setString(2, taxpayer.getPanNo().toUpperCase());

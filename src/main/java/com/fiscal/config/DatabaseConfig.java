@@ -51,16 +51,30 @@ public final class DatabaseConfig {
             }
         }
 
-        // Allow System environment variables to override properties
-        String envUrl = System.getenv("ORACLE_URL");
+        // Allow System environment variables to override properties (Postgres, Oracle, Cloud)
+        String envUrl = System.getenv("DATABASE_URL");
+        if (envUrl == null || envUrl.trim().isEmpty()) {
+            envUrl = System.getenv("DB_URL");
+        }
+        if (envUrl == null || envUrl.trim().isEmpty()) {
+            envUrl = System.getenv("ORACLE_URL");
+        }
         if (envUrl != null && !envUrl.trim().isEmpty()) {
             PROPERTIES.setProperty("db.url", envUrl.trim());
         }
-        String envUser = System.getenv("ORACLE_USER");
+
+        String envUser = System.getenv("DB_USER");
+        if (envUser == null || envUser.trim().isEmpty()) {
+            envUser = System.getenv("ORACLE_USER");
+        }
         if (envUser != null && !envUser.trim().isEmpty()) {
             PROPERTIES.setProperty("db.user", envUser.trim());
         }
-        String envPass = System.getenv("ORACLE_PASSWORD");
+
+        String envPass = System.getenv("DB_PASSWORD");
+        if (envPass == null || envPass.trim().isEmpty()) {
+            envPass = System.getenv("ORACLE_PASSWORD");
+        }
         if (envPass != null && !envPass.trim().isEmpty()) {
             PROPERTIES.setProperty("db.password", envPass.trim());
         }
@@ -69,22 +83,24 @@ public final class DatabaseConfig {
     }
 
     private static void setDefaultProperties() {
-        PROPERTIES.setProperty("db.driver", "oracle.jdbc.OracleDriver");
-        PROPERTIES.setProperty("db.url", "jdbc:oracle:thin:@localhost:1521:XE");
-        PROPERTIES.setProperty("db.user", "system");
-        PROPERTIES.setProperty("db.password", "oracle");
+        PROPERTIES.setProperty("db.driver", "org.postgresql.Driver");
+        PROPERTIES.setProperty("db.url", "jdbc:postgresql://localhost:5432/postgres");
+        PROPERTIES.setProperty("db.user", "postgres");
+        PROPERTIES.setProperty("db.password", "postgres");
         PROPERTIES.setProperty("db.allowFallback", "true");
     }
 
     private static synchronized void ensureDriverLoaded() {
         if (driverLoaded) return;
-        String driver = PROPERTIES.getProperty("db.driver", "oracle.jdbc.OracleDriver");
+        String url = PROPERTIES.getProperty("db.url", "");
+        String defaultDriver = url.startsWith("jdbc:postgresql:") ? "org.postgresql.Driver" : "oracle.jdbc.OracleDriver";
+        String driver = PROPERTIES.getProperty("db.driver", defaultDriver);
         try {
             Class.forName(driver);
             driverLoaded = true;
-            LOGGER.info("Oracle JDBC Driver loaded: " + driver);
+            LOGGER.info("JDBC Driver loaded: " + driver);
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.WARNING, "Oracle JDBC driver not found on classpath: " + driver, e);
+            LOGGER.log(Level.WARNING, "JDBC driver not found on classpath: " + driver, e);
         }
     }
 

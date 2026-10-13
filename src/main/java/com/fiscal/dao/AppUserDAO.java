@@ -22,7 +22,7 @@ public class AppUserDAO {
         username = username.trim();
 
         if (DatabaseConfig.isOracleReachable()) {
-            String sql = "SELECT USER_ID, USERNAME, EMAIL, PASSWORD_HASH, ROLE, ACTIVE, CREATED_AT " +
+            String sql = "SELECT USER_ID, USERNAME, FULL_NAME, EMAIL, PASSWORD_HASH, SALT, ROLE, STATUS, ACTIVE, CREATED_AT " +
                          "FROM APP_USER WHERE LOWER(USERNAME) = LOWER(?)";
             try (Connection conn = DatabaseConfig.getConnection();
                  PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -54,7 +54,7 @@ public class AppUserDAO {
         if (userId == null) return null;
 
         if (DatabaseConfig.isOracleReachable()) {
-            String sql = "SELECT USER_ID, USERNAME, EMAIL, PASSWORD_HASH, ROLE, ACTIVE, CREATED_AT " +
+            String sql = "SELECT USER_ID, USERNAME, FULL_NAME, EMAIL, PASSWORD_HASH, SALT, ROLE, STATUS, ACTIVE, CREATED_AT " +
                          "FROM APP_USER WHERE USER_ID = ?";
             try (Connection conn = DatabaseConfig.getConnection();
                  PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -82,7 +82,7 @@ public class AppUserDAO {
     public List<AppUser> findAll() {
         List<AppUser> list = new ArrayList<>();
         if (DatabaseConfig.isOracleReachable()) {
-            String sql = "SELECT USER_ID, USERNAME, EMAIL, PASSWORD_HASH, ROLE, ACTIVE, CREATED_AT " +
+            String sql = "SELECT USER_ID, USERNAME, FULL_NAME, EMAIL, PASSWORD_HASH, SALT, ROLE, STATUS, ACTIVE, CREATED_AT " +
                          "FROM APP_USER ORDER BY USER_ID ASC";
             try (Connection conn = DatabaseConfig.getConnection();
                  PreparedStatement ps = conn.prepareStatement(sql);
@@ -111,9 +111,9 @@ public class AppUserDAO {
     public boolean create(AppUser user) {
         if (DatabaseConfig.isOracleReachable()) {
             String sql = "INSERT INTO APP_USER (USERNAME, EMAIL, PASSWORD_HASH, ROLE, ACTIVE, CREATED_AT) " +
-                         "VALUES (?, ?, ?, ?, ?, SYSTIMESTAMP)";
+                         "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
             try (Connection conn = DatabaseConfig.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(sql, new String[]{"USER_ID"})) {
+                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, user.getUsername());
                 ps.setString(2, user.getEmail());
                 ps.setString(3, user.getPasswordHash());
@@ -200,9 +200,17 @@ public class AppUserDAO {
         AppUser u = new AppUser();
         u.setUserId(rs.getLong("USER_ID"));
         u.setUsername(rs.getString("USERNAME"));
+        try { u.setFullName(rs.getString("FULL_NAME")); } catch (Exception ignored) {}
         u.setEmail(rs.getString("EMAIL"));
         u.setPasswordHash(rs.getString("PASSWORD_HASH"));
+        try { u.setSalt(rs.getString("SALT")); } catch (Exception ignored) {}
         u.setRole(rs.getString("ROLE"));
+        try {
+            String st = rs.getString("STATUS");
+            u.setStatus(st != null ? st : "ACTIVE");
+        } catch (Exception ignored) {
+            u.setStatus("ACTIVE");
+        }
         int active = rs.getInt("ACTIVE");
         u.setActive(active);
         Timestamp ts = rs.getTimestamp("CREATED_AT");
