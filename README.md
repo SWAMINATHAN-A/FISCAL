@@ -1,423 +1,421 @@
-# FISCAL — Custom Tax Management System
-> **Brand Tagline:** Clarity in every calculation.  
-> **Academic Purpose:** Custom Tax Management / Web Application Development (PAT Project)  
-> **Backend:** Java Servlets (`jakarta.servlet.*`) + JDBC  
-> **Database:** Oracle Database (SQL*Plus DDL/DML, Sequences, Constraints, Triggers)  
-> **Frontend:** HTML5 + Vanilla CSS3 + Vanilla JavaScript (Fetch API)  
-> **Build System:** Maven 3.10+  
-> **Application Server:** Apache Tomcat 10+ / Embedded `FiscalDevServer`
+# FISCAL — Cloud-Native SQL Tax Management System
+
+[![Cloud PaaS](https://img.shields.io/badge/Deployed%20on-Render%20Cloud-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://render.com)
+[![Cloud Database](https://img.shields.io/badge/Database-Supabase%20PostgreSQL%20(Cloud)-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![SQL Standards](https://img.shields.io/badge/RDBMS-ANSI%20SQL%20%7C%20PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Java](https://img.shields.io/badge/Backend-Java%2017%20%7C%20Jakarta%20Servlets-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Docker](https://img.shields.io/badge/Container-Docker%20Multi--Stage-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Academic](https://img.shields.io/badge/VIT%20Chennai-BACSE202%20DBMS%20PAT-blue?style=for-the-badge)](https://chennai.vit.ac.in/)
+
+> **Institutional Provenance:** Vellore Institute of Technology (VIT), Chennai Campus  
+> **School:** School of Computer Science & Engineering (SCOPE)  
+> **Course:** BACSE202 — Database Systems (DBMS) • Project-Based Learning (PAT)  
+> **Faculty Guide & Mentor:** Prof. A SWAMINATHAN (Assistant Professor Senior Grade 2)  
+> **Lead Developer & Architect:** Arpit Raj (B.Tech Computer Science & Engineering)  
+> **Live Architecture:** 100% Cloud-Hosted (Render PaaS + Supabase Managed PostgreSQL)
 
 ---
 
-## 1. Project Title
-**FISCAL — Custom Tax Management System**
+## 1. Executive Summary
+
+**FISCAL** is an enterprise-grade, cloud-native **SQL relational tax management system** engineered to replace fragile manual spreadsheets and legacy offline accounting scripts. Unlike traditional desktop or local-only classroom projects, FISCAL is architected as an **always-on, cloud-distributed platform**:
+
+- **No Local Database Dependency:** FISCAL does **not** rely on a local database instance running on a developer laptop. The system operates on a managed, high-availability **Cloud PostgreSQL** database hosted on **Supabase** (AWS ap-northeast-1 / Tokyo region), accessible with SSL encryption (`sslmode=require`) through an enterprise connection pooler.
+- **Cloud PaaS Orchestration:** Deployed as an automated multi-stage **Docker container on Render**, integrating continuous deployment (CI/CD) tracking the GitHub repository.
+- **Relational SQL Integrity:** Built on authoritative ANSI SQL data definitions (DDL), referential integrity constraints, primary/foreign key cascading hierarchies, identity sequences, and ACID-compliant transactional state machines via JDBC `PreparedStatement`.
+- **Editorial Matcha UI & 3D Cluster Visualizer:** Pairs a mathematical calculation engine (`BigDecimal` Half-Up rounding) with a bespoke Matcha & Milk Honey design system and a WebGL Three.js 3D database cluster visualizer.
 
 ---
 
-## 2. Brand Description
-FISCAL is a custom tax management workspace that brings taxpayer demographics, statutory tax categories, authoritative tax calculation rules, and payment ledger records into one unified, art-directed interface. It enables authorized tax operators and administrators to register taxpayers, maintain tax rules, calculate assessments with mathematical precision, record payments, and audit compliance status without feeling like conventional, sterile accounting software.
+## 2. Cloud Architecture vs. Local Setup
+
+| Dimension | Legacy / Local Systems | FISCAL Cloud Architecture |
+| :--- | :--- | :--- |
+| **Database Host** | `localhost:1521` or `localhost:5432` (Fragile laptop daemon) | **Supabase Cloud Managed PostgreSQL** (AWS Multi-AZ Infrastructure) |
+| **Application Host** | Local machine terminal / localhost server | **Render Cloud Platform** (Automated Linux Container) |
+| **Network Routing** | Offline / Local loopback only | Global IPv4 Cloud Session Pooler with SSL Encryption (`sslmode=require`) |
+| **High Availability** | Dies when laptop sleeps or closes | **24/7 Cloud Uptime** with automated health-checks and self-healing |
+| **Deployment Flow** | Manual local builds | **Git Push to GitHub `main` &rarr; Automated Cloud Build & Deploy** |
+| **Data Persistence** | Lost on local disk wipes | Multi-tenant cloud backups, continuous transaction write-ahead logging (WAL) |
 
 ---
 
-## 3. Problem Statement
-Tax compliance in institutional and enterprise settings often suffers from fragmented data silos, opaque calculation rules, unverified manual inputs, and clunky user interfaces. Organizations struggle with tracking taxpayer liabilities against statutory rates, reconciling pending bank clearances, and maintaining transparent audit trails. FISCAL addresses this by establishing an authoritative Oracle-backed ledger, mathematical server-side calculation rules, and an editorial, tactile interface that simplifies financial oversight.
-
----
-
-## 4. Project Objectives
-1. **Authoritative Persistence:** Implement real Oracle Database tables (`TAXPAYER`, `TAX_TYPE`, `TAX_PAYMENT`, `APP_USER`) with primary keys, foreign keys, and check constraints.
-2. **Statutory Tax Engine:** Implement authoritative server-side calculation logic (`Tax Amount = Applicable Amount × Tax Rate / 100`) with consistent rounding (`HALF_UP`).
-3. **Ledger Integrity:** Provide multi-state payment tracking (`PAID`, `PENDING`, `REVERSED`) with atomic database transactions, commit, and rollback capabilities.
-4. **Distinctive Visual Identity:** Deliver a bespoke, warm, tactile light-mode interface using the immutable Matcha (`#9CA763`) and Milk Honey (`#F1E8C7`) palette.
-5. **Session Security:** Implement PBKDF2 password hashing with cryptographically secure salts, session fixation protection, and role-based authorization.
-
----
-
-## 5. Key Features
-- **Editorial Split-Screen Login:** Distinctive typography, geometric ledger artwork, and quick demonstration accounts.
-- **Database-Driven Dashboard:** Real-time statistics including total registered taxpayers, total payments, verified revenue, pending collections, and category breakdowns.
-- **Taxpayer Management:** Search by name or PAN, filter by city, sort by income, register new taxpayers, edit details, and view payment histories with masked PAN data.
-- **Tax Category & Rate Governance:** Configurable statutory tax categories (Income Tax, GST, Capital Gains, Corporate Tax) with rate validation and deletion protection.
-- **Interactive Calculation Workbench:** Server-side tax liability assessment with one-click conversion into a formal payment ledger record.
-- **Payment Ledger & Status Transitions:** Filter by status, search by reference, record new payments, update status, and reverse transactions.
-- **Administrator Governance:** Role-based access control (Admin, Officer, Auditor) and operator account provisioning.
-- **Zero-Setup Offline Resilience:** Built-in embedded server and resilient repository engine ensuring full demonstration capability even when local Oracle instances are offline.
-
----
-
-## 6. Technology Stack
-- **Frontend:** HTML5, Vanilla CSS3 (Custom Properties / Design Tokens), Vanilla JavaScript (ES6+, Fetch API, custom events).
-- **Backend:** Java 17+, Jakarta Servlet API 5.0, Java Database Connectivity (JDBC).
-- **Database:** Oracle Database 19c / 21c / 23c Free / Express Edition (XE).
-- **Libraries:** Oracle JDBC Driver (`ojdbc11`), Google Gson (`gson 2.10.1`), Java Cryptography Extension (`PBKDF2WithHmacSHA256`).
-- **Server:** Apache Tomcat 10+ (Standard WAR) and Built-in `FiscalDevServer`.
-- **Build System:** Apache Maven 3.10.
-
----
-
-## 7. Architecture Diagram
+## 3. High-Level Architectural Topology
 
 ```text
-+-------------------------------------------------------------+
-|                  CLIENT BROWSER (LIGHT MODE)                 |
-| HTML5 + Vanilla CSS3 Tokens + Fetch API + Dynamic Micro-UI  |
-+-------------------------------------------------------------+
-                              |
-                     JSON / HTTP Requests
-                              v
-+-------------------------------------------------------------+
-|                     APPLICATION SERVER                      |
-|                (Apache Tomcat / FiscalDevServer)            |
-|                                                             |
-|  [Filters]                                                  |
-|   - CharacterEncodingFilter (UTF-8, Security Headers)       |
-|   - AuthenticationFilter (Session Verification, RBAC)       |
-|                                                             |
-|  [Servlets]                                                 |
-|   - AuthServlet (/api/auth/*)                               |
-|   - DashboardServlet (/api/dashboard/summary)               |
-|   - TaxpayerServlet (/api/taxpayers/*)                      |
-|   - TaxTypeServlet (/api/tax-types/*)                       |
-|   - TaxCalculationServlet (/api/tax/calculate)              |
-|   - TaxPaymentServlet (/api/payments/*)                     |
-|   - UserServlet (/api/users/*)                              |
-|                                                             |
-|  [Business Services Layer]                                  |
-|   - AuthService, TaxpayerService, TaxTypeService            |
-|   - TaxCalculationService (Authoritative Formula & Rounding)|
-|   - TaxPaymentService, DashboardService                     |
-|                                                             |
-|  [Data Access Object (DAO) Layer]                           |
-|   - PreparedStatement Queries & Transaction Commit/Rollback |
-|   - DatabaseConfig Connection Factory                       |
-+-------------------------------------------------------------+
-                              |
-                       Oracle JDBC Driver
-                              v
-+-------------------------------------------------------------+
-|                       ORACLE DATABASE                       |
-|  Tables: TAXPAYER, TAX_TYPE, TAX_PAYMENT, APP_USER          |
-|  Sequences: TAXPAYER_SEQ, TAX_TYPE_SEQ, TAX_PAYMENT_SEQ     |
-|  Triggers: Before-Insert Auto-Increment Handlers            |
-|  Constraints: PK, FK (Cascade), UNIQUE (PAN), CHECK (Age)   |
-+-------------------------------------------------------------+
+ ┌────────────────────────────────────────────────────────────────────────┐
+ │                      CLIENT BROWSER (ANY DEVICE)                       │
+ │  Semantic HTML5 + Vanilla CSS3 Tokens + Vanilla JS ES6+ + Three.js     │
+ └────────────────────────────────────┬───────────────────────────────────┘
+                                      │ HTTPS / JSON REST APIs
+                                      ▼
+ ┌────────────────────────────────────────────────────────────────────────┐
+ │                     RENDER CLOUD CONTAINER (PAAS)                      │
+ │                  Docker Multi-Stage Runtime (Linux Alpine)             │
+ │                                                                        │
+ │  [Embedded Servlet Gateway / FiscalDevServer]                          │
+ │   ├── CharacterEncodingFilter (UTF-8, Security Headers, CORS)          │
+ │   └── AuthenticationFilter (Session Verification, RBAC Roles)          │
+ │                                                                        │
+ │  [RESTful Servlets]                                                    │
+ │   ├── /api/auth/*               (PBKDF2 Hashing, Session Management)   │
+ │   ├── /api/dashboard/summary    (Real-Time SQL Aggregate Queries)      │
+ │   ├── /api/taxpayers/*          (CRUD, PAN Verification, Filtering)    │
+ │   ├── /api/tax-types/*          (Statutory Rates & Rule Governance)    │
+ │   ├── /api/tax/calculate        (BigDecimal Mathematical Engine)       │
+ │   ├── /api/payments/*           (Ledger Records, Status Transitions)   │
+ │   └── /api/users/*              (Role-Based Operator Governance)       │
+ │                                                                        │
+ │  [Authoritative JDBC Data Access Layer (DAO)]                          │
+ │   └── 100% Parameterized SQL (PreparedStatement) + Atomic Transactions │
+ └────────────────────────────────────┬───────────────────────────────────┘
+                                      │ PostgreSQL Wire Protocol + TLS/SSL
+                                      ▼
+ ┌────────────────────────────────────────────────────────────────────────┐
+ │               SUPABASE CLOUD POSTGRESQL (AWS TOKYO POOLER)             │
+ │                      Direct / Session Pooler Port: 5432                │
+ │                                                                        │
+ │  [ANSI SQL Relational Schema (3NF)]                                    │
+ │   ├── TAXPAYER      (Taxpayer Demographics & PAN Uniqueness)           │
+ │   ├── TAX_TYPE      (Statutory Categories & Configurable Rates)        │
+ │   ├── TAX_RECORD    (Assessment Ledger & Statutory Calculations)       │
+ │   ├── TAX_PAYMENT   (Settlements, Audit Refs, Status State Machine)    │
+ │   └── APP_USER      (RBAC Credentials, PBKDF2 Hashes & Crypt Salts)    │
+ │                                                                        │
+ │  [Relational Constraints & Integrity]                                  │
+ │   ├── Primary Keys (BIGINT GENERATED ALWAYS AS IDENTITY)               │
+ │   ├── Foreign Keys (ON DELETE CASCADE referential hierarchy)           │
+ │   ├── Check Constraints (Income >= 0, Rates 0-100%, Age 18-120)        │
+ │   └── Unique Indexes (PAN, Email, Username, Payment Reference)         │
+ └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 8. Project Structure
-```text
-FISCAL/
-├── README.md                      # Master build and technical documentation
-├── pom.xml                        # Maven dependencies (Servlet 5.0, ojdbc11, Gson)
-├── .gitignore                     # Git ignore rules for build artifacts and IDEs
-├── docs/
-│   ├── DATABASE_SCHEMA.md         # Full schema specification and ERD
-│   ├── API_DOCUMENTATION.md       # Servlet RESTful endpoints documentation
-│   ├── TEST_CASES.md              # Systematic test suites and status results
-│   └── INSTALLATION.md            # Detailed installation and deployment guide
-├── database/
-│   ├── 01_schema.sql              # Table definitions, PK/FK, checks, and indexes
-│   ├── 02_sequences.sql           # Oracle sequences and auto-increment triggers
-│   ├── 03_seed_data.sql           # Verified demonstration records and users
-│   ├── 04_sample_dml.sql          # Joins, aggregations, and transaction examples
-│   └── 05_verification.sql        # Database integrity and row count audits
-└── src/
-    └── main/
-        ├── resources/
-        │   └── db.properties      # JDBC connection properties & fallback config
-        ├── java/
-        │   └── com/fiscal/
-        │       ├── config/        # DatabaseConfig connection factory
-        │       ├── model/         # AppUser, Taxpayer, TaxType, TaxPayment, etc.
-        │       ├── dao/           # AppUserDAO, TaxpayerDAO, TaxTypeDAO, etc.
-        │       ├── service/       # Business logic and calculation service
-        │       ├── servlet/       # RESTful HTTP Servlets
-        │       ├── filter/        # Authentication, Authorization, and UTF-8 Filters
-        │       ├── util/          # PasswordUtil (PBKDF2), ValidationUtil, JsonUtil
-        │       └── server/        # FiscalDevServer embedded standalone runner
-        └── webapp/
-            ├── index.html         # Main art-directed application interface
-            ├── login.html         # Standalone authentication redirect
-            ├── assets/
-            │   ├── css/
-            │   │   ├── fiscal-tokens.css      # Matcha & Milk Honey tokens
-            │   │   ├── fiscal-base.css        # Form components & animations
-            │   │   ├── fiscal-layout.css      # Header, navigation & layout
-            │   │   └── fiscal-views.css       # Split login, dashboard & modals
-            │   ├── js/
-            │   │   ├── fiscal-api.js          # Fetch API client abstraction
-            │   │   └── fiscal-app.js          # Master UI coordinator & state
-            │   └── fonts/                     # Local typography directory
-            └── WEB-INF/
-                └── web.xml        # Servlet 5.0 deployment descriptor
+## 4. SQL Relational Database Specification (PostgreSQL)
+
+FISCAL's foundation is built upon a normalized (3NF) relational SQL schema enforcing strict referential integrity, constraints, and auditability.
+
+### 4.1 Relational Schema Diagram (Entity Relationship)
+
+```mermaid
+erDiagram
+    APP_USER {
+        BIGINT user_id PK
+        VARCHAR username UK
+        VARCHAR password_hash
+        VARCHAR salt
+        VARCHAR full_name
+        VARCHAR email UK
+        VARCHAR role
+        VARCHAR status
+        TIMESTAMPTZ created_at
+    }
+
+    TAXPAYER {
+        BIGINT taxpayer_id PK
+        VARCHAR name
+        VARCHAR pan_no UK
+        INT age
+        VARCHAR city
+        NUMERIC income
+        TIMESTAMPTZ created_at
+    }
+
+    TAX_TYPE {
+        BIGINT tax_type_id PK
+        VARCHAR tax_name UK
+        NUMERIC tax_rate
+        VARCHAR description
+        TIMESTAMPTZ created_at
+    }
+
+    TAX_RECORD {
+        BIGINT tax_id PK
+        BIGINT taxpayer_id FK
+        BIGINT tax_type_id FK
+        NUMERIC tax_amount
+        VARCHAR status
+        TIMESTAMPTZ created_at
+    }
+
+    TAX_PAYMENT {
+        BIGINT payment_id PK
+        BIGINT taxpayer_id FK
+        BIGINT tax_id FK
+        NUMERIC amount_paid
+        TIMESTAMPTZ payment_date
+        VARCHAR payment_method
+        VARCHAR status
+        VARCHAR payment_ref UK
+        VARCHAR remarks
+    }
+
+    TAXPAYER ||--o{ TAX_RECORD : "assessed for"
+    TAX_TYPE ||--o{ TAX_RECORD : "categorized by"
+    TAXPAYER ||--o{ TAX_PAYMENT : "remits"
+    TAX_RECORD ||--o{ TAX_PAYMENT : "settles"
 ```
 
----
+### 4.2 SQL Table Definitions
 
-## 9. Prerequisites
-- **JDK:** OpenJDK or Oracle JDK 17, 21, 24, or 27.
-- **Maven:** Version 3.8+.
-- **Oracle Database (Optional):** Oracle XE, 23c Free, or Enterprise.
-- **Browser:** Any modern Chromium, Firefox, or Safari browser.
-
----
-
-## 10. Java Installation and Verification
-Verify your installed Java version:
-```bash
-java -version
-```
-Expected output:
-```text
-openjdk version "17.0.x" (or 21, 24, 27)
-```
-
----
-
-## 11. Maven Configuration
-Verify Maven:
-```bash
-mvn -version
-```
-
----
-
-## 12. Oracle Database Setup
-FISCAL connects to standard Oracle instances via thin JDBC connection URL:
-`jdbc:oracle:thin:@localhost:1521:XE` (or service name `FREE` or `ORCLCDB`).
-
----
-
-## 13. SQL*Plus Connection Instructions
-Log into SQL*Plus:
-```bash
-sqlplus system/oracle@localhost:1521/XE
-```
-
----
-
-## 14. JDBC Driver Installation and Configuration
-The official Oracle JDBC driver is managed via Maven dependency:
-```xml
-<dependency>
-    <groupId>com.oracle.database.jdbc</groupId>
-    <artifactId>ojdbc11</artifactId>
-    <version>23.3.0.23.09</version>
-</dependency>
-```
-
----
-
-## 15. Environment Variables
-You can optionally configure connection parameters via environment variables:
-- `ORACLE_URL`
-- `ORACLE_USER`
-- `ORACLE_PASSWORD`
-- `PORT` (Default: `8080`)
-
----
-
-## 16. Database Schema
-Defined in `database/01_schema.sql`:
-- `TAXPAYER`: `TAXPAYER_ID`, `NAME`, `PAN_NO`, `AGE`, `CITY`, `INCOME`, `CREATED_AT`
-- `TAX_TYPE`: `TAX_ID`, `TAX_NAME`, `TAX_RATE`, `DESCRIPTION`, `CREATED_AT`
-- `TAX_PAYMENT`: `PAYMENT_ID`, `TAXPAYER_ID`, `TAX_ID`, `AMOUNT`, `PAYMENT_DATE`, `STATUS`, `PAYMENT_REF`, `REMARKS`
-- `APP_USER`: `USER_ID`, `USERNAME`, `PASSWORD_HASH`, `SALT`, `FULL_NAME`, `EMAIL`, `ROLE`, `STATUS`, `CREATED_AT`
-
----
-
-## 17. DDL Execution
-In SQL*Plus:
+#### 1. `TAXPAYER` Table (Demographics & Statutory Identifier)
+Stores taxpayer census and demographic information. Enforces unique government-issued Permanent Account Numbers (PAN).
 ```sql
-@database/01_schema.sql
-@database/02_sequences.sql
+CREATE TABLE TAXPAYER (
+    TAXPAYER_ID  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    NAME         VARCHAR(100) NOT NULL,
+    PAN_NO       VARCHAR(10)  NOT NULL UNIQUE,
+    AGE          INT          NOT NULL CHECK (AGE >= 18 AND AGE <= 120),
+    CITY         VARCHAR(50)  NOT NULL,
+    INCOME       NUMERIC(14,2) NOT NULL CHECK (INCOME >= 0),
+    CREATED_AT   TIMESTAMPTZ  DEFAULT NOW()
+);
+
+CREATE INDEX idx_taxpayer_city ON TAXPAYER(CITY);
+CREATE INDEX idx_taxpayer_income ON TAXPAYER(INCOME);
 ```
 
----
-
-## 18. DML and Sample Data
-In SQL*Plus:
+#### 2. `TAX_TYPE` Table (Statutory Categories & Rates)
+Maintains legal tax types and configured percentage rates.
 ```sql
-@database/03_seed_data.sql
-```
-Loads 10 realistic taxpayers across Indian metro cities, 6 statutory tax types, and 10 payment ledger transactions.
-
----
-
-## 19. Secure Administrator Initialization
-Seed administrator accounts are hashed with PBKDF2 (10,000 iterations, 32-byte hash) and 16-byte random salts:
-- `admin` / `Admin@123` (Administrator)
-- `officer` / `Officer@123` (Assessment Officer)
-- `auditor` / `Auditor@123` (Compliance Auditor)
-
----
-
-## 20. Build Commands
-Build the deployable WAR:
-```bash
-mvn clean package
-```
-Generates `target/fiscal.war`.
-
----
-
-## 21. Tomcat Setup
-Download Apache Tomcat 10.1+ and set environment variables:
-```bash
-export CATALINA_HOME=/path/to/apache-tomcat-10.1.x
+CREATE TABLE TAX_TYPE (
+    TAX_TYPE_ID  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    TAX_NAME     VARCHAR(50)  NOT NULL UNIQUE,
+    TAX_RATE     NUMERIC(5,2) NOT NULL CHECK (TAX_RATE >= 0.00 AND TAX_RATE <= 100.00),
+    DESCRIPTION  VARCHAR(255),
+    CREATED_AT   TIMESTAMPTZ  DEFAULT NOW()
+);
 ```
 
----
+#### 3. `TAX_RECORD` Table (Tax Assessment Ledger)
+Calculated statutory liabilities linking a specific taxpayer to a designated tax category.
+```sql
+CREATE TABLE TAX_RECORD (
+    TAX_ID       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    TAXPAYER_ID  BIGINT         NOT NULL REFERENCES TAXPAYER(TAXPAYER_ID) ON DELETE CASCADE,
+    TAX_TYPE_ID  BIGINT         NOT NULL REFERENCES TAX_TYPE(TAX_TYPE_ID) ON DELETE CASCADE,
+    TAX_AMOUNT   NUMERIC(14,2)  NOT NULL CHECK (TAX_AMOUNT >= 0),
+    STATUS       VARCHAR(20)    DEFAULT 'PENDING' CHECK (STATUS IN ('PAID', 'PENDING', 'REVERSED')),
+    CREATED_AT   TIMESTAMPTZ    DEFAULT NOW()
+);
+```
 
-## 22. WAR Deployment
-Deploy the WAR file to Tomcat:
-```bash
-cp target/fiscal.war $CATALINA_HOME/webapps/
-$CATALINA_HOME/bin/startup.sh
+#### 4. `TAX_PAYMENT` Table (Financial Settlements & Reconciliations)
+Authoritative financial settlement audit trail with unique transaction reference codes.
+```sql
+CREATE TABLE TAX_PAYMENT (
+    PAYMENT_ID     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    TAXPAYER_ID    BIGINT         REFERENCES TAXPAYER(TAXPAYER_ID) ON DELETE CASCADE,
+    TAX_ID         BIGINT         REFERENCES TAX_RECORD(TAX_ID) ON DELETE CASCADE,
+    AMOUNT_PAID    NUMERIC(14,2)  NOT NULL CHECK (AMOUNT_PAID >= 0),
+    PAYMENT_DATE   TIMESTAMPTZ    DEFAULT NOW(),
+    PAYMENT_METHOD VARCHAR(30)    DEFAULT 'NET_BANKING',
+    STATUS         VARCHAR(20)    DEFAULT 'PAID' CHECK (STATUS IN ('PAID', 'PENDING', 'REVERSED')),
+    PAYMENT_REF    VARCHAR(50)    NOT NULL UNIQUE,
+    REMARKS        VARCHAR(255)
+);
+
+CREATE INDEX idx_payment_status ON TAX_PAYMENT(STATUS);
+```
+
+#### 5. `APP_USER` Table (Role-Based Access Control & PBKDF2 Credentials)
+Stores authorized administrative and operator user profiles with cryptographic salts.
+```sql
+CREATE TABLE APP_USER (
+    USER_ID       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    USERNAME      VARCHAR(50)  NOT NULL UNIQUE,
+    PASSWORD_HASH VARCHAR(128) NOT NULL,
+    SALT          VARCHAR(64)  NOT NULL,
+    FULL_NAME     VARCHAR(100) NOT NULL,
+    EMAIL         VARCHAR(100) NOT NULL UNIQUE,
+    ROLE          VARCHAR(20)  DEFAULT 'OFFICER' CHECK (ROLE IN ('ADMIN', 'OFFICER', 'AUDITOR')),
+    STATUS        VARCHAR(20)  DEFAULT 'ACTIVE' CHECK (STATUS IN ('ACTIVE', 'SUSPENDED')),
+    CREATED_AT    TIMESTAMPTZ  DEFAULT NOW()
+);
 ```
 
 ---
 
-## 23. Application URL
-- **Embedded Server:** `http://localhost:8080/`
-- **Tomcat:** `http://localhost:8080/fiscal/`
+## 5. Key SQL Operations & Relational Queries
 
----
+All database queries are executed via JDBC using strictly parameterized `PreparedStatement` to prevent SQL Injection vulnerabilities.
 
-## 24. Functional Workflow
-1. User logs in with authorized credentials on the split-screen editorial login view.
-2. The dashboard displays live database aggregates, revenue collections, and status distributions.
-3. Operators register or search taxpayers and view payment histories with masked PAN data.
-4. Operators define tax categories and configured percentage rates.
-5. In the assessment workbench, selecting a taxpayer and tax category runs server-side calculations.
-6. The user clicks "Commit Assessment to Payment Ledger" to record a verified transaction.
-7. Payment status transitions (`PAID`, `PENDING`, `REVERSED`) update the ledger and dashboard in real time.
+### 5.1 Real-Time Dashboard Aggregation (Multi-Table Joins & Grouping)
+```sql
+-- Total Revenue Collections vs. Pending Liabilities
+SELECT 
+    COUNT(p.PAYMENT_ID) AS TOTAL_PAYMENTS,
+    COALESCE(SUM(CASE WHEN p.STATUS = 'PAID' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS VERIFIED_REVENUE,
+    COALESCE(SUM(CASE WHEN p.STATUS = 'PENDING' THEN p.AMOUNT_PAID ELSE 0 END), 0) AS PENDING_REVENUE
+FROM TAX_PAYMENT p;
+```
 
----
+### 5.2 Category-Wise Tax Revenue Analysis
+```sql
+SELECT 
+    t.TAX_NAME,
+    t.TAX_RATE,
+    COUNT(r.TAX_ID) AS ASSESSMENT_COUNT,
+    COALESCE(SUM(p.AMOUNT_PAID), 0) AS TOTAL_COLLECTED
+FROM TAX_TYPE t
+LEFT JOIN TAX_RECORD r ON t.TAX_TYPE_ID = r.TAX_TYPE_ID
+LEFT JOIN TAX_PAYMENT p ON r.TAX_ID = p.TAX_ID AND p.STATUS = 'PAID'
+GROUP BY t.TAX_TYPE_ID, t.TAX_NAME, t.TAX_RATE
+ORDER BY TOTAL_COLLECTED DESC;
+```
 
-## 25. Tax Calculation Logic
-Authoritative formula implemented in `TaxCalculationService.java`:
-$$\text{Tax Amount} = \frac{\text{Applicable Taxable Amount} \times \text{Tax Rate}}{100}$$
-- Precision: `RoundingMode.HALF_UP`, scale 2.
-- Input verification: Negative taxable amounts and invalid rates are strictly rejected.
+### 5.3 Taxpayer Demographic Breakdown & Compliance Audit
+```sql
+SELECT 
+    tp.TAXPAYER_ID,
+    tp.NAME,
+    tp.PAN_NO,
+    tp.CITY,
+    tp.INCOME,
+    COUNT(p.PAYMENT_ID) AS PAYMENT_COUNT,
+    COALESCE(SUM(p.AMOUNT_PAID), 0) AS TOTAL_REMITTED
+FROM TAXPAYER tp
+LEFT JOIN TAX_PAYMENT p ON tp.TAXPAYER_ID = p.TAXPAYER_ID
+GROUP BY tp.TAXPAYER_ID, tp.NAME, tp.PAN_NO, tp.CITY, tp.INCOME
+ORDER BY tp.TAXPAYER_ID ASC;
+```
 
----
-
-## 26. Taxpayer Management
-- **Fields:** Taxpayer ID, Full Name, PAN Number (validated with `^[A-Z]{5}[0-9]{4}[A-Z]$`), Age (18–120), City, Declared Income.
-- **Operations:** Create, View Details, Edit, Delete (cascading payments), Search, City Filter, Income Sort.
-
----
-
-## 27. Tax Type Management
-- **Fields:** Tax ID, Tax Name, Tax Rate (0.00% to 100.00%), Description.
-- **Integrity Rule:** Deletion is blocked if existing payment records reference the category.
-
----
-
-## 28. Payment Management
-- **Fields:** Payment ID, Taxpayer ID, Tax ID, Amount, Payment Date, Status (`PAID`, `PENDING`, `REVERSED`), Payment Reference (`FSC-2026-XXXX`), Remarks.
-- **Operations:** Record Payment, Update Status, Filter by Status/Category, Delete.
-
----
-
-## 29. Database Relationships
-- `TAXPAYER` (1) to `TAX_PAYMENT` (M): A taxpayer has multiple payment records.
-- `TAX_TYPE` (1) to `TAX_PAYMENT` (M): A tax category is associated with multiple payment records.
-
----
-
-## 30. API Documentation
-Exhaustive endpoint details, request payloads, and status codes are documented in [`docs/API_DOCUMENTATION.md`](docs/API_DOCUMENTATION.md).
-
----
-
-## 31. Security Measures
-- **Password Security:** PBKDF2WithHmacSHA256, 10,000 iterations, unique 16-byte random salts.
-- **SQL Injection Prevention:** 100% JDBC `PreparedStatement` parameterized queries.
-- **Session Security:** Session fixation rotation, `HttpOnly` cookie flags, 30-minute inactivity timeout.
-- **XSS & Output Sanitization:** Server-side and client-side character escaping.
-- **Sensitive Data Privacy:** PAN numbers masked in public displays (`ABC••••••F`).
-
----
-
-## 32. Testing Instructions
-Execute the automated and manual test scenarios documented in [`docs/TEST_CASES.md`](docs/TEST_CASES.md).
-
----
-
-## 33. Troubleshooting
-- **Oracle Connection Refused:** Check if Oracle listener is active (`lsnrctl status`). If offline, FISCAL automatically activates its internal verified repository engine.
-- **Port 8080 in Use:** Run with `PORT=8090 mvn compile exec:java ...`.
-- **Tomcat 404 Error:** Ensure Tomcat 10+ is used (compatible with `jakarta.servlet`).
-
----
-
-## 34. Known Limitations
-- External third-party payment gateway webhooks (e.g., Stripe, Razorpay) are not integrated by academic project design.
-- PAN verification uses statutory regex rather than a live government API integration.
-
----
-
-## 35. Future Improvements
-- Automated PDF receipt generation and taxpayer tax clearance certificates.
-- Multi-tier income tax slab bracket engine for progressive multi-tier tax systems.
-- Comprehensive audit logging table for operator tracking.
-
----
-
-## 36. Font Installation and Licensing Notes
-- **Bootzy:** Expressive display typeface for large headlines.
-- **AQUIRE:** Technical display typeface for wordmarks, labels, and identifiers.
-- **Expected Asset Locations:**
-  ```text
-  src/main/webapp/assets/fonts/
-  ├── Bootzy.woff2
-  └── AQUIRE.woff2
-  ```
-- **Fallback Implementation:** In accordance with prompt guidelines, when custom font binaries are not provided locally, FISCAL provides `@font-face` declarations with graceful, premium fallbacks (`Syne` for expressive display, `Space Grotesk` for technical display, and `Inter` for supporting typography).
-
----
-
-## 37. Exact Design Tokens and Colour Values
-```css
-:root {
-  /* Primary brand colours — immutable */
-  --matcha: #9CA763;
-  --milk-honey: #F1E8C7;
-
-  /* Light surfaces */
-  --paper: #F1E8C7;
-  --surface: #F8F3DF;
-  --surface-raised: #FFFDF5;
-  --surface-white: #FFFFFF;
-
-  /* Text */
-  --ink: #292D23;
-  --muted: #777A65;
-  --muted-strong: #555B43;
-
-  /* Borders */
-  --border: #DED9BD;
-  --border-strong: #C5C8A4;
-
-  /* Matcha variations */
-  --matcha-soft: #E8EACF;
-  --matcha-light: #D1D8A8;
-  --matcha-mid: #84914D;
-  --matcha-deep: #626E36;
-
-  /* Semantic states */
-  --danger: #A83F35;
-  --danger-soft: #F6E6DF;
-  --warning: #805D20;
-  --warning-soft: #F5EBD0;
-  --success: #46663A;
-  --success-soft: #E7EBD8;
-  --info: #426B68;
-  --info-soft: #E2ECE4;
+### 5.4 Atomic Transactional Integrity (Commit & Rollback)
+When committing an assessment or reversing a payment, database transactions enforce ACID compliance:
+```java
+try (Connection conn = DatabaseConfig.getConnection()) {
+    conn.setAutoCommit(false); // Begin Atomic Transaction Block
+    
+    // 1. Insert assessment record
+    try (PreparedStatement psRecord = conn.prepareStatement(insertRecordSql, Statement.RETURN_GENERATED_KEYS)) {
+        psRecord.setLong(1, taxpayerId);
+        psRecord.setLong(2, taxTypeId);
+        psRecord.setBigDecimal(3, taxAmount);
+        psRecord.executeUpdate();
+        // ... get generated key
+    }
+    
+    // 2. Insert corresponding payment ledger transaction
+    try (PreparedStatement psPayment = conn.prepareStatement(insertPaymentSql)) {
+        psPayment.setLong(1, taxpayerId);
+        psPayment.setLong(2, generatedTaxId);
+        psPayment.setBigDecimal(3, taxAmount);
+        psPayment.setString(4, paymentRef);
+        psPayment.executeUpdate();
+    }
+    
+    conn.commit(); // Atomic commit guaranteeing both or neither persist
+} catch (SQLException ex) {
+    conn.rollback(); // Rollback to pristine state upon any fault
+    throw ex;
 }
 ```
 
-# FISCAL
+---
+
+## 6. Mathematical Tax Engine
+
+The calculation engine is implemented entirely on the server within [`TaxCalculationService.java`](src/main/java/com/fiscal/service/TaxCalculationService.java) to eliminate client-side tampering:
+
+$$\text{Tax Amount} = \frac{\text{Applicable Amount} \times \text{Tax Rate}}{100}$$
+
+- **Arbitrary Precision:** Implemented using `java.math.BigDecimal` with `RoundingMode.HALF_UP` scaled to 2 decimal places.
+- **Zero Floating-Point Divergence:** Prevents IEEE 754 floating-point rounding errors typical of JavaScript financial arithmetic.
+- **Bounds Checking:** Rejects negative income brackets, invalid rate parameters ($>100\%$), or malformed decimal structures before any SQL execution occurs.
+
+---
+
+## 7. Cloud DevOps & Deployment Pipeline
+
+### 7.1 Multi-Stage Docker Build
+FISCAL uses a minimal multi-stage `Dockerfile` producing a secure, optimized production container:
+```dockerfile
+# Stage 1: Build & Package Bytecode
+FROM maven:3.9-eclipse-temurin-17 AS builder
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Minimal Cloud JRE Runtime
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=builder /app/target/fiscal.war ./fiscal.war
+COPY --from=builder /app/target/classes ./classes
+COPY --from=builder /app/target/dependency ./lib
+ENV PORT=10000
+EXPOSE 10000
+CMD ["java", "-cp", "classes:lib/*", "com.fiscal.server.FiscalDevServer"]
+```
+
+### 7.2 Cloud Persistence Configuration (`db.properties`)
+Configured to seamlessly communicate with Supabase's cloud-hosted session pooler:
+```properties
+db.type=postgresql
+db.driver=org.postgresql.Driver
+db.url=jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require
+db.username=postgres.trqnooxyetnkufiblrkg
+db.password=${DB_PASSWORD}
+db.allowFallback=false
+```
+
+---
+
+## 8. Security Specifications
+
+1. **Password Hashing (FIPS-Standard):** PBKDF2 with HMAC-SHA256 (`PBKDF2WithHmacSHA256`), 10,000 iterations, and cryptographically secure random 16-byte salts. Plaintext passwords are never logged or stored.
+2. **SQL Injection Elimination:** 100% of all SQL interactions use parameterized `PreparedStatement`. No dynamic SQL string concatenation is permitted.
+3. **Session Hardening:** HTTP session tokens are rotated upon successful login to prevent Session Fixation attacks.
+4. **Data Privacy (Masking):** Permanent Account Numbers (PAN) are masked in general operator views (`ABC••••••F`) and only unmasked for authorized administrative actions.
+5. **Cross-Site Scripting (XSS) Mitigation:** Context-aware output encoding across all dynamic HTML templates and input sanitation filters.
+
+---
+
+## 9. Academic Credentials & Provenance
+
+| Dimension | Academic Specification |
+| :--- | :--- |
+| **Institution** | **Vellore Institute of Technology (VIT), Chennai** |
+| **Department / School** | School of Computer Science & Engineering (**SCOPE**) |
+| **Course Code & Title** | **BACSE202 — Database Systems** (DBMS) |
+| **Project Type** | Project-Based Assessment & Learning (PAT Course Project) |
+| **Faculty Guide & Mentor** | **Prof. A SWAMINATHAN** (Assistant Professor Senior Grade 2, VIT Chennai) |
+| **Student Lead & Architect** | **Arpit Raj** (Student, B.Tech Computer Science & Engineering) |
+| **Production Architecture** | Cloud PostgreSQL (Supabase) + Java 17 + Docker + Render PaaS |
+
+---
+
+## 10. Verified Default Demonstration Accounts
+
+| Role | Username | Password | Access Level |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | `admin` | `Admin@123` | Full access (System settings, user management, taxpayers, categories, audit ledger) |
+| **Assessment Officer** | `officer` | `Officer@123` | Operational access (Taxpayer registration, assessment calculations, payment records) |
+| **Compliance Auditor** | `auditor` | `Auditor@123` | Read-only audit access (Reports, payment records, compliance verifications) |
+
+---
+
+## 11. Local Development (Optional)
+
+While the production application runs completely in the cloud, you can run the application locally connecting to the cloud database:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/arpitraj1720/FISCAL.git
+cd FISCAL
+
+# 2. Build the project using Maven
+mvn clean compile
+
+# 3. Start the local server
+mvn exec:java
+```
+Access the application locally at `http://localhost:8080/`.
+
+---
+
+## 12. License & Integrity Notice
+
+Developed as an academic course project for **BACSE202 Database Systems** at **Vellore Institute of Technology (VIT), Chennai**. All rights reserved &copy; 2026.
