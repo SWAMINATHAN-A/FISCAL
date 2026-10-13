@@ -1008,11 +1008,31 @@
     checkInitialAuth();
   });
 
+  function switchAboutTab(tab) {
+    const appBtn = document.getElementById('btn-subtab-app');
+    const usBtn = document.getElementById('btn-subtab-us');
+    const appContent = document.getElementById('subtab-content-app');
+    const usContent = document.getElementById('subtab-content-us');
+
+    if (tab === 'us') {
+      if (appBtn) appBtn.classList.remove('active');
+      if (usBtn) usBtn.classList.add('active');
+      if (appContent) appContent.style.display = 'none';
+      if (usContent) usContent.style.display = 'block';
+    } else {
+      if (usBtn) usBtn.classList.remove('active');
+      if (appBtn) appBtn.classList.add('active');
+      if (usContent) usContent.style.display = 'none';
+      if (appContent) appContent.style.display = 'block';
+    }
+  }
+
   // Public API attached to window
   window.FiscalApp = {
     navigateTo,
     openModal,
     closeModal,
+    switchAboutTab,
     viewTaxpayerDetails,
     openEditTaxpayer,
     deleteTaxpayer,

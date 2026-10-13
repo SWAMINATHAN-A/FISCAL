@@ -944,3 +944,188 @@
   }
 }
 
+/* ============================================================================
+   7. ABOUT SUBTABS & ARCHITECTURE BLUEPRINT STYLES
+   ============================================================================ */
+.about-tab-nav {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 2px;
+}
+
+.about-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted-strong);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: var(--radius-small) var(--radius-small) 0 0;
+}
+
+.about-subtab-btn:hover {
+  color: var(--ink);
+  background: var(--surface-hover);
+}
+
+.about-subtab-btn.active {
+  color: var(--matcha-deep);
+  border-bottom-color: var(--matcha);
+  background: var(--matcha-soft);
+}
+
+.arch-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0 var(--space-8);
+}
+
+.arch-tier-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.arch-tier-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-raised);
+  border-color: var(--matcha);
+}
+
+.arch-tier-num {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--matcha-dark);
+  background: var(--matcha-soft);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  width: fit-content;
+  margin-bottom: 8px;
+  border: 1px solid var(--matcha-light);
+}
+
+.arch-tier-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.arch-tier-desc {
+  font-size: 12.5px;
+  color: var(--muted-strong);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  flex: 1;
+}
+
+.arch-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.arch-tech-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  background: #F4F2E6;
+  color: var(--ink-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.schema-erd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-4) 0 var(--space-6);
+}
+
+.schema-table-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.15s ease;
+}
+
+.schema-table-card:hover {
+  border-color: var(--matcha);
+}
+
+.schema-table-header {
+  background: #F8F6EC;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.schema-table-name {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+.schema-table-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  background: var(--matcha-soft);
+  color: var(--matcha-deep);
+  border-radius: 4px;
+  border: 1px solid var(--matcha-light);
+}
+
+.schema-table-body {
+  padding: 10px 14px;
+  font-size: 12px;
+}
+
+.schema-col-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.schema-col-row:last-child {
+  border-bottom: none;
+}
+
+.schema-col-name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.schema-col-type {
+  color: var(--muted-strong);
+  font-size: 11px;
+}
+
+
