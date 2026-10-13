@@ -8,4 +8,4 @@ services:
       - key: PORT
         value: 10000
       - key: DB_PASSWORD
-        value: FiscalAdmin2026!
+        sync: false

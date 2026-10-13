@@ -39,47 +39,82 @@ public final class DatabaseConfig {
             setDefaultProperties();
         }
 
+        java.util.Map<String, String> dotEnv = loadDotEnv();
+
         // Expand any ${VAR} placeholders in properties
         for (String key : PROPERTIES.stringPropertyNames()) {
             String val = PROPERTIES.getProperty(key);
             if (val != null && val.startsWith("${") && val.endsWith("}")) {
                 String envVar = val.substring(2, val.length() - 1);
-                String envVal = System.getenv(envVar);
+                String envVal = getEnvOrDotEnv(envVar, dotEnv);
                 if (envVal != null) {
                     PROPERTIES.setProperty(key, envVal);
                 }
             }
         }
 
-        // Allow System environment variables to override properties (Postgres, Oracle, Cloud)
-        String envUrl = System.getenv("DATABASE_URL");
-        if (envUrl == null || envUrl.trim().isEmpty()) {
-            envUrl = System.getenv("DB_URL");
-        }
-        if (envUrl == null || envUrl.trim().isEmpty()) {
-            envUrl = System.getenv("ORACLE_URL");
-        }
-        if (envUrl != null && !envUrl.trim().isEmpty()) {
-            PROPERTIES.setProperty("db.url", envUrl.trim());
+        // Allow System environment variables or .env to override properties
+        String envUrl = getEnvOrDotEnv("DATABASE_URL", dotEnv);
+        if (envUrl == null) envUrl = getEnvOrDotEnv("DB_URL", dotEnv);
+        if (envUrl == null) envUrl = getEnvOrDotEnv("ORACLE_URL", dotEnv);
+        if (envUrl != null) {
+            PROPERTIES.setProperty("db.url", envUrl);
         }
 
-        String envUser = System.getenv("DB_USER");
-        if (envUser == null || envUser.trim().isEmpty()) {
-            envUser = System.getenv("ORACLE_USER");
-        }
-        if (envUser != null && !envUser.trim().isEmpty()) {
-            PROPERTIES.setProperty("db.user", envUser.trim());
+        String envUser = getEnvOrDotEnv("DB_USER", dotEnv);
+        if (envUser == null) envUser = getEnvOrDotEnv("ORACLE_USER", dotEnv);
+        if (envUser != null) {
+            PROPERTIES.setProperty("db.user", envUser);
         }
 
-        String envPass = System.getenv("DB_PASSWORD");
-        if (envPass == null || envPass.trim().isEmpty()) {
-            envPass = System.getenv("ORACLE_PASSWORD");
-        }
-        if (envPass != null && !envPass.trim().isEmpty()) {
-            PROPERTIES.setProperty("db.password", envPass.trim());
+        String envPass = getEnvOrDotEnv("DB_PASSWORD", dotEnv);
+        if (envPass == null) envPass = getEnvOrDotEnv("ORACLE_PASSWORD", dotEnv);
+        if (envPass != null) {
+            PROPERTIES.setProperty("db.password", envPass);
         }
 
         ensureDriverLoaded();
+    }
+
+    private static String getEnvOrDotEnv(String key, java.util.Map<String, String> dotEnv) {
+        String val = System.getenv(key);
+        if (val == null || val.trim().isEmpty()) {
+            val = dotEnv.get(key);
+        }
+        return (val != null && !val.trim().isEmpty()) ? val.trim() : null;
+    }
+
+    private static java.util.Map<String, String> loadDotEnv() {
+        java.util.Map<String, String> envMap = new java.util.HashMap<>();
+        java.io.File[] candidateFiles = new java.io.File[] {
+            new java.io.File(".env"),
+            new java.io.File(System.getProperty("user.dir"), ".env")
+        };
+        for (java.io.File f : candidateFiles) {
+            if (f.exists() && f.isFile()) {
+                try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(f))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        line = line.trim();
+                        if (line.isEmpty() || line.startsWith("#")) continue;
+                        int eqIdx = line.indexOf('=');
+                        if (eqIdx > 0) {
+                            String k = line.substring(0, eqIdx).trim();
+                            String v = line.substring(eqIdx + 1).trim();
+                            if ((v.startsWith("\"") && v.endsWith("\"")) || (v.startsWith("'") && v.endsWith("'"))) {
+                                v = v.substring(1, v.length() - 1);
+                            }
+                            envMap.put(k, v);
+                        }
+                    }
+                    LOGGER.info("Loaded configuration properties from local .env");
+                    break;
+                } catch (Exception ex) {
+                    LOGGER.log(Level.WARNING, "Failed reading .env file: " + f.getAbsolutePath(), ex);
+                }
+            }
+        }
+        return envMap;
     }
 
     private static void setDefaultProperties() {
