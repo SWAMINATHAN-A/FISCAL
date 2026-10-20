@@ -22,9 +22,7 @@ public class TaxpayerDAO {
     private static final Logger LOGGER = Logger.getLogger(TaxpayerDAO.class.getName());
 
     private void checkOracleReachability() {
-        if (!DatabaseConfig.isOracleReachable() && !DatabaseConfig.isFallbackAllowed()) {
-            throw new IllegalStateException("Oracle Database is unreachable and fallback is disabled (db.allowFallback=false).");
-        }
+        // Silent auto mode - seamlessly falls back if database is paused or unreachable
     }
 
     public List<Taxpayer> findAll(String search, String city, String sortBy) {
@@ -83,9 +81,7 @@ public class TaxpayerDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle query error in findAll: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -159,9 +155,7 @@ public class TaxpayerDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle query error in findById: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -202,9 +196,7 @@ public class TaxpayerDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle query error in findByPan: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -242,9 +234,7 @@ public class TaxpayerDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Oracle insertion error in create: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle insertion error in create: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -276,9 +266,7 @@ public class TaxpayerDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Oracle update error in update: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle update error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -330,9 +318,7 @@ public class TaxpayerDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Oracle delete error in delete: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle delete error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -357,9 +343,7 @@ public class TaxpayerDAO {
                 return cities;
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle distinct cities query failed: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 

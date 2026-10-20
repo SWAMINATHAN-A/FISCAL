@@ -9,15 +9,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Authoritative Database Configuration and Connection Factory for Oracle Database.
- * Supports connection pooling parameters, environment overrides, and offline resilience.
+ * Authoritative Database Configuration and Connection Factory for FISCAL.
+ * Supports connection pooling parameters, environment overrides, fail-fast detection,
+ * and silent in-memory fallback when Supabase is paused or unreachable.
  */
 public final class DatabaseConfig {
 
     private static final Logger LOGGER = Logger.getLogger(DatabaseConfig.class.getName());
     private static final Properties PROPERTIES = new Properties();
     private static boolean driverLoaded = false;
-    private static Boolean oracleAvailable = null;
+    private static volatile Boolean dbAvailable = null;
 
     static {
         loadProperties();
@@ -71,6 +72,18 @@ public final class DatabaseConfig {
         if (envPass == null) envPass = getEnvOrDotEnv("ORACLE_PASSWORD", dotEnv);
         if (envPass != null) {
             PROPERTIES.setProperty("db.password", envPass);
+        }
+
+        String envFallback = getEnvOrDotEnv("ALLOW_FALLBACK", dotEnv);
+        if (envFallback == null) envFallback = getEnvOrDotEnv("db.allowFallback", dotEnv);
+        if (envFallback != null) {
+            PROPERTIES.setProperty("db.allowFallback", envFallback);
+        }
+
+        String appMode = getEnvOrDotEnv("APP_MODE", dotEnv);
+        if ("MOCK".equalsIgnoreCase(appMode) || "OFFLINE".equalsIgnoreCase(appMode)) {
+            dbAvailable = false;
+            LOGGER.info("APP_MODE set to " + appMode + ": Direct in-memory mode activated.");
         }
 
         ensureDriverLoaded();
@@ -140,7 +153,8 @@ public final class DatabaseConfig {
     }
 
     /**
-     * Obtains a live JDBC Connection to Oracle Database.
+     * Obtains a live JDBC Connection with fail-fast timeouts (3s connection timeout)
+     * so paused Supabase instances are detected immediately without stalling.
      * @throws SQLException if connection cannot be established.
      */
     public static Connection getConnection() throws SQLException {
@@ -148,27 +162,47 @@ public final class DatabaseConfig {
         String url = PROPERTIES.getProperty("db.url");
         String user = PROPERTIES.getProperty("db.user");
         String pass = PROPERTIES.getProperty("db.password");
-        
-        DriverManager.setLoginTimeout(3); // 3-second timeout for responsive detection
-        return DriverManager.getConnection(url, user, pass);
+
+        Properties props = new Properties();
+        if (user != null) props.setProperty("user", user);
+        if (pass != null) props.setProperty("password", pass);
+
+        // Fail-fast timeout for paused or slow cloud databases (3s connect, 5s socket)
+        props.setProperty("connectTimeout", "3");
+        props.setProperty("socketTimeout", "5");
+        props.setProperty("loginTimeout", "3");
+
+        DriverManager.setLoginTimeout(3);
+        return DriverManager.getConnection(url, props);
     }
 
     /**
-     * Probes whether the target Oracle instance is currently reachable.
+     * Probes whether the database instance is currently reachable.
+     * If unreachable (e.g. Supabase paused), silently switches to resilient in-memory mode.
      */
     public static synchronized boolean isOracleReachable() {
-        if (oracleAvailable != null) {
-            return oracleAvailable;
+        if (dbAvailable != null) {
+            return dbAvailable;
         }
         try (Connection conn = getConnection()) {
-            oracleAvailable = (conn != null && !conn.isClosed());
-            LOGGER.info("Oracle Database connection established successfully.");
-            return oracleAvailable;
+            dbAvailable = (conn != null && !conn.isClosed());
+            LOGGER.info("Database connection verified successfully (Live mode).");
+            return dbAvailable;
         } catch (Exception e) {
-            LOGGER.warning("Oracle Database is not reachable at " + PROPERTIES.getProperty("db.url") 
-                    + " (" + e.getMessage() + "). Offline resilience activated.");
-            oracleAvailable = false;
+            LOGGER.info("Supabase database is paused or unreachable (" + e.getMessage() + "). Auto mode silently activated in-memory fallback.");
+            dbAvailable = false;
             return false;
+        }
+    }
+
+    /**
+     * Marks the database as unreachable mid-session so subsequent requests
+     * switch instantly to the in-memory store with zero latency.
+     */
+    public static synchronized void markUnreachable() {
+        if (dbAvailable == null || dbAvailable) {
+            LOGGER.info("Database connection dropped or unavailable. Silently routing to resilient in-memory store.");
+            dbAvailable = false;
         }
     }
 
@@ -176,7 +210,7 @@ public final class DatabaseConfig {
      * Resets probed state to allow re-checking connectivity.
      */
     public static synchronized void resetConnectionState() {
-        oracleAvailable = null;
+        dbAvailable = null;
     }
 
     public static String getDbUrl() {
@@ -188,6 +222,10 @@ public final class DatabaseConfig {
     }
 
     public static boolean isFallbackAllowed() {
-        return "true".equalsIgnoreCase(PROPERTIES.getProperty("db.allowFallback", "true"));
+        String val = PROPERTIES.getProperty("db.allowFallback");
+        if (val != null) {
+            return !"false".equalsIgnoreCase(val.trim());
+        }
+        return true;
     }
 }

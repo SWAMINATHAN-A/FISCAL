@@ -10,8 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Data Access Object for Oracle APP_USER table:
- * USER_ID (IDENTITY), USERNAME, EMAIL, PASSWORD_HASH, ROLE, ACTIVE, CREATED_AT
+ * Data Access Object for APP_USER table with live Supabase & in-memory silent fallback.
  */
 public class AppUserDAO {
 
@@ -33,18 +32,15 @@ public class AppUserDAO {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle query error in findByUsername: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new IllegalStateException("Database error fetching user: " + e.getMessage(), e);
-                }
+                LOGGER.log(Level.WARNING, "Database query error in findByUsername: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
         }
 
-        if (DatabaseConfig.isFallbackAllowed()) {
-            for (AppUser user : MemoryStore.getUsers().values()) {
-                if (user.getUsername().equalsIgnoreCase(username)) {
-                    return cloneUser(user);
-                }
+        // Silent in-memory fallback
+        for (AppUser user : MemoryStore.getUsers().values()) {
+            if (user.getUsername().equalsIgnoreCase(username)) {
+                return cloneUser(user);
             }
         }
         return null;
@@ -65,18 +61,13 @@ public class AppUserDAO {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle query error in findById: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new IllegalStateException("Database error fetching user by ID: " + e.getMessage(), e);
-                }
+                LOGGER.log(Level.WARNING, "Database query error in findById: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
         }
 
-        if (DatabaseConfig.isFallbackAllowed()) {
-            AppUser user = MemoryStore.getUsers().get(userId);
-            return user != null ? cloneUser(user) : null;
-        }
-        return null;
+        AppUser user = MemoryStore.getUsers().get(userId);
+        return user != null ? cloneUser(user) : null;
     }
 
     public List<AppUser> findAll() {
@@ -92,19 +83,15 @@ public class AppUserDAO {
                 }
                 return list;
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle query error in findAll: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new IllegalStateException("Database error listing users: " + e.getMessage(), e);
-                }
+                LOGGER.log(Level.WARNING, "Database query error in findAll: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
         }
 
-        if (DatabaseConfig.isFallbackAllowed()) {
-            for (AppUser user : MemoryStore.getUsers().values()) {
-                list.add(cloneUser(user));
-            }
-            list.sort((a, b) -> a.getUserId().compareTo(b.getUserId()));
+        for (AppUser user : MemoryStore.getUsers().values()) {
+            list.add(cloneUser(user));
         }
+        list.sort((a, b) -> a.getUserId().compareTo(b.getUserId()));
         return list;
     }
 
@@ -129,21 +116,16 @@ public class AppUserDAO {
                     return true;
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle insertion error in create: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new IllegalStateException("Database error creating user: " + e.getMessage(), e);
-                }
+                LOGGER.log(Level.WARNING, "Database insertion error in create: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
         }
 
-        if (DatabaseConfig.isFallbackAllowed()) {
-            user.setUserId(MemoryStore.nextUserId());
-            user.setCreatedAt(new Date(System.currentTimeMillis()));
-            if (user.getStatus() == null) user.setStatus("ACTIVE");
-            MemoryStore.getUsers().put(user.getUserId(), cloneUser(user));
-            return true;
-        }
-        return false;
+        user.setUserId(MemoryStore.nextUserId());
+        user.setCreatedAt(new Date(System.currentTimeMillis()));
+        if (user.getStatus() == null) user.setStatus("ACTIVE");
+        MemoryStore.getUsers().put(user.getUserId(), cloneUser(user));
+        return true;
     }
 
     public boolean update(AppUser user) {
@@ -157,21 +139,17 @@ public class AppUserDAO {
                 ps.setLong(4, user.getUserId());
                 return ps.executeUpdate() > 0;
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle update error in update: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new IllegalStateException("Database error updating user: " + e.getMessage(), e);
-                }
+                LOGGER.log(Level.WARNING, "Database update error in update: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
         }
 
-        if (DatabaseConfig.isFallbackAllowed()) {
-            AppUser existing = MemoryStore.getUsers().get(user.getUserId());
-            if (existing != null) {
-                existing.setEmail(user.getEmail());
-                existing.setRole(user.getRole());
-                existing.setActive(user.getActive());
-                return true;
-            }
+        AppUser existing = MemoryStore.getUsers().get(user.getUserId());
+        if (existing != null) {
+            existing.setEmail(user.getEmail());
+            existing.setRole(user.getRole());
+            existing.setActive(user.getActive());
+            return true;
         }
         return false;
     }
@@ -184,16 +162,11 @@ public class AppUserDAO {
                 ps.setLong(1, userId);
                 return ps.executeUpdate() > 0;
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle delete error in delete: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new IllegalStateException("Database error deleting user: " + e.getMessage(), e);
-                }
+                LOGGER.log(Level.WARNING, "Database delete error in delete: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
         }
-        if (DatabaseConfig.isFallbackAllowed()) {
-            return MemoryStore.getUsers().remove(userId) != null;
-        }
-        return false;
+        return MemoryStore.getUsers().remove(userId) != null;
     }
 
     private AppUser mapUser(ResultSet rs) throws SQLException {

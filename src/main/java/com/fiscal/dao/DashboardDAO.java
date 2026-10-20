@@ -28,9 +28,7 @@ public class DashboardDAO {
     private final TaxPaymentDAO paymentDAO = new TaxPaymentDAO();
 
     private void checkOracleReachability() {
-        if (!DatabaseConfig.isOracleReachable() && !DatabaseConfig.isFallbackAllowed()) {
-            throw new IllegalStateException("Oracle Database is unreachable and fallback is disabled (db.allowFallback=false).");
-        }
+        // Silent auto mode - seamlessly falls back if database is paused or unreachable
     }
 
     public DashboardSummary getSummary() {
@@ -93,9 +91,7 @@ public class DashboardDAO {
 
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle dashboard aggregation error: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 

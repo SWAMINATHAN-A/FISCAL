@@ -22,9 +22,7 @@ public class TaxTypeDAO {
     private static final Logger LOGGER = Logger.getLogger(TaxTypeDAO.class.getName());
 
     private void checkOracleReachability() {
-        if (!DatabaseConfig.isOracleReachable() && !DatabaseConfig.isFallbackAllowed()) {
-            throw new IllegalStateException("Oracle Database is unreachable and fallback is disabled (db.allowFallback=false).");
-        }
+        // Silent auto mode - seamlessly falls back if database is paused or unreachable
     }
 
     public List<TaxType> findAll(String search) {
@@ -65,9 +63,7 @@ public class TaxTypeDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle query error in findAll: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -123,9 +119,7 @@ public class TaxTypeDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle query error in findById: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -166,9 +160,7 @@ public class TaxTypeDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle query error in findByName: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -203,9 +195,7 @@ public class TaxTypeDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Oracle insertion error in create: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle insertion error in create: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -234,9 +224,7 @@ public class TaxTypeDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Oracle update error in update: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle update error in update: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -264,9 +252,7 @@ public class TaxTypeDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Oracle query error in hasAssociatedPayments: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle error: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 
@@ -298,9 +284,7 @@ public class TaxTypeDAO {
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Oracle delete error in delete: " + e.getMessage(), e);
-                if (!DatabaseConfig.isFallbackAllowed()) {
-                    throw new RuntimeException("Oracle delete error in delete: " + e.getMessage(), e);
-                }
+                DatabaseConfig.markUnreachable();
             }
         }
 

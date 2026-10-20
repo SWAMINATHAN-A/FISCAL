@@ -1,21 +1,29 @@
 package com.fiscal.dao;
 
 import com.fiscal.config.DatabaseConfig;
+import com.fiscal.model.TaxPayment;
 import com.fiscal.model.TaxRecord;
+import com.fiscal.model.TaxType;
+import com.fiscal.model.Taxpayer;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Data Access Object for TAX_RECORD table managing statutory assessments.
+ * Data Access Object for TAX_RECORD table with Oracle & in-memory resilience.
  */
 public class TaxRecordDAO {
 
     private static final Logger LOGGER = Logger.getLogger(TaxRecordDAO.class.getName());
+    private static final Map<Long, TaxRecord> MEMORY_RECORDS = new ConcurrentHashMap<>();
+    private static final AtomicLong RECORD_ID_GEN = new AtomicLong(3011);
 
     public List<TaxRecord> findAll(String search, Long taxpayerId, Long taxTypeId, String status) {
         List<TaxRecord> list = new ArrayList<>();
@@ -64,8 +72,51 @@ public class TaxRecordDAO {
                     return list;
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Oracle query error in TaxRecordDAO.findAll: " + e.getMessage(), e);
+                LOGGER.log(Level.WARNING, "Database query error in TaxRecordDAO.findAll: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
+        }
+
+        // Silent in-memory synthesis from MemoryStore
+        final String sTerm = (search != null) ? search.trim().toLowerCase() : "";
+        for (TaxPayment p : MemoryStore.getPayments().values()) {
+            if (taxpayerId != null && !taxpayerId.equals(p.getTaxpayerId())) continue;
+            if (taxTypeId != null && !taxTypeId.equals(p.getTaxId())) continue;
+            if (status != null && !status.trim().isEmpty() && !"ALL".equalsIgnoreCase(status.trim())) {
+                if (!status.trim().equalsIgnoreCase(p.getStatus())) continue;
+            }
+            Taxpayer tp = MemoryStore.getTaxpayers().get(p.getTaxpayerId());
+            TaxType tt = MemoryStore.getTaxTypes().get(p.getTaxId());
+            if (tp != null && !sTerm.isEmpty()) {
+                boolean match = tp.getName().toLowerCase().contains(sTerm) || 
+                                (tp.getPanNo() != null && tp.getPanNo().toLowerCase().contains(sTerm));
+                if (!match) continue;
+            }
+            TaxRecord tr = new TaxRecord();
+            tr.setTaxId(p.getPaymentId());
+            tr.setTaxpayerId(p.getTaxpayerId());
+            tr.setTaxTypeId(p.getTaxId());
+            tr.setTaxAmount(p.getAmount());
+            tr.setStatus(p.getStatus());
+            if (tp != null) {
+                tr.setTaxpayerName(tp.getName());
+                tr.setTaxpayerPan(tp.getPanNo());
+            }
+            if (tt != null) {
+                tr.setTaxName(tt.getTaxName());
+                tr.setTaxRate(tt.getTaxRate());
+            }
+            tr.setAmountPaid("PAID".equalsIgnoreCase(p.getStatus()) ? p.getAmount() : BigDecimal.ZERO);
+            list.add(tr);
+        }
+
+        for (TaxRecord tr : MEMORY_RECORDS.values()) {
+            if (taxpayerId != null && !taxpayerId.equals(tr.getTaxpayerId())) continue;
+            if (taxTypeId != null && !taxTypeId.equals(tr.getTaxTypeId())) continue;
+            if (status != null && !status.trim().isEmpty() && !"ALL".equalsIgnoreCase(status.trim())) {
+                if (!status.trim().equalsIgnoreCase(tr.getStatus())) continue;
+            }
+            list.add(tr);
         }
 
         return list;
@@ -92,8 +143,34 @@ public class TaxRecordDAO {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Oracle query error in TaxRecordDAO.findById: " + e.getMessage(), e);
+                LOGGER.log(Level.WARNING, "Database query error in TaxRecordDAO.findById: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
+        }
+
+        TaxRecord inMem = MEMORY_RECORDS.get(taxId);
+        if (inMem != null) return inMem;
+
+        TaxPayment p = MemoryStore.getPayments().get(taxId);
+        if (p != null) {
+            TaxRecord tr = new TaxRecord();
+            tr.setTaxId(p.getPaymentId());
+            tr.setTaxpayerId(p.getTaxpayerId());
+            tr.setTaxTypeId(p.getTaxId());
+            tr.setTaxAmount(p.getAmount());
+            tr.setStatus(p.getStatus());
+            Taxpayer tp = MemoryStore.getTaxpayers().get(p.getTaxpayerId());
+            TaxType tt = MemoryStore.getTaxTypes().get(p.getTaxId());
+            if (tp != null) {
+                tr.setTaxpayerName(tp.getName());
+                tr.setTaxpayerPan(tp.getPanNo());
+            }
+            if (tt != null) {
+                tr.setTaxName(tt.getTaxName());
+                tr.setTaxRate(tt.getTaxRate());
+            }
+            tr.setAmountPaid("PAID".equalsIgnoreCase(p.getStatus()) ? p.getAmount() : BigDecimal.ZERO);
+            return tr;
         }
         return null;
     }
@@ -123,10 +200,26 @@ public class TaxRecordDAO {
                     conn.rollback();
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle insertion error in TaxRecordDAO.create: " + e.getMessage(), e);
+                LOGGER.log(Level.WARNING, "Database insertion error in TaxRecordDAO.create: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
         }
-        return false;
+
+        // Silent in-memory creation
+        record.setTaxId(RECORD_ID_GEN.getAndIncrement());
+        Taxpayer tp = MemoryStore.getTaxpayers().get(record.getTaxpayerId());
+        TaxType tt = MemoryStore.getTaxTypes().get(record.getTaxTypeId());
+        if (tp != null) {
+            record.setTaxpayerName(tp.getName());
+            record.setTaxpayerPan(tp.getPanNo());
+        }
+        if (tt != null) {
+            record.setTaxName(tt.getTaxName());
+            record.setTaxRate(tt.getTaxRate());
+        }
+        if (record.getAmountPaid() == null) record.setAmountPaid(BigDecimal.ZERO);
+        MEMORY_RECORDS.put(record.getTaxId(), record);
+        return true;
     }
 
     public boolean updateStatus(Long taxId, String status) {
@@ -147,8 +240,20 @@ public class TaxRecordDAO {
                     conn.rollback();
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle update error in TaxRecordDAO.updateStatus: " + e.getMessage(), e);
+                LOGGER.log(Level.WARNING, "Database update error in TaxRecordDAO.updateStatus: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
+        }
+
+        TaxRecord rec = MEMORY_RECORDS.get(taxId);
+        if (rec != null) {
+            rec.setStatus(status.toUpperCase());
+            return true;
+        }
+        TaxPayment p = MemoryStore.getPayments().get(taxId);
+        if (p != null) {
+            p.setStatus(status.toUpperCase());
+            return true;
         }
         return false;
     }
@@ -157,7 +262,6 @@ public class TaxRecordDAO {
         if (taxId == null) return false;
 
         if (DatabaseConfig.isOracleReachable()) {
-            // Delete payments referencing this tax record, then tax record
             String delPay = "DELETE FROM TAX_PAYMENT WHERE TAX_ID = ?";
             String delRec = "DELETE FROM TAX_RECORD WHERE TAX_ID = ?";
             try (Connection conn = DatabaseConfig.getConnection()) {
@@ -183,10 +287,14 @@ public class TaxRecordDAO {
                     throw ex;
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Oracle delete error in TaxRecordDAO.delete: " + e.getMessage(), e);
+                LOGGER.log(Level.WARNING, "Database delete error in TaxRecordDAO.delete: " + e.getMessage());
+                DatabaseConfig.markUnreachable();
             }
         }
-        return false;
+
+        MEMORY_RECORDS.remove(taxId);
+        MemoryStore.getPayments().remove(taxId);
+        return true;
     }
 
     private TaxRecord mapRecord(ResultSet rs) throws SQLException {
